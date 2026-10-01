@@ -1,0 +1,844 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>fftheme – Tab-Simulator</title>
+<style>
+/* ---------- Seite und Seitenleiste (nicht Teil der Simulation) ---------- */
+:root {
+  color-scheme: light dark;
+  --ui-bg: light-dark(#f1f1f3, #151517);
+  --ui-panel: light-dark(#ffffff, #1e1e21);
+  --ui-fg: light-dark(#1b1b1f, #e9e9ed);
+  --ui-muted: light-dark(#5f5f6a, #a3a3ad);
+  --ui-line: light-dark(#d5d5db, #38383e);
+  --ui-accent: light-dark(#1f56c8, #8db0ff);
+  --ui-ok: light-dark(#17703a, #6fd596);
+  --ui-bad: light-dark(#b3261e, #ff8f85);
+  --ui-code: light-dark(#f4f4f6, #111113);
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  margin: 0;
+  background: var(--ui-bg);
+  color: var(--ui-fg);
+  font: 14px/1.45 system-ui, sans-serif;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 380px;
+}
+main { overflow: auto; padding: 20px 24px 40px; min-width: 0; }
+aside {
+  overflow-y: auto;
+  background: var(--ui-panel);
+  border-inline-start: 1px solid var(--ui-line);
+  padding: 4px 16px 32px;
+}
+@media (max-width: 900px) {
+  html, body { height: auto; }
+  body { grid-template-columns: minmax(0, 1fr); }
+  main { overflow: visible; padding: 16px; }
+  aside { border-inline-start: 0; border-top: 1px solid var(--ui-line); }
+}
+h1 { font-size: 18px; margin: 0; font-weight: 650; }
+h2 { font-size: 13px; margin: 28px 0 8px; font-weight: 650; }
+.sub { color: var(--ui-muted); margin: 2px 0 16px; }
+code, pre { font-family: ui-monospace, "DejaVu Sans Mono", monospace; font-size: 12px; }
+button, input, select { font: inherit; color: inherit; }
+button {
+  background: transparent;
+  border: 1px solid var(--ui-line);
+  border-radius: 4px;
+  padding: 3px 10px;
+  cursor: pointer;
+}
+button:hover { border-color: var(--ui-muted); }
+:focus-visible { outline: 2px solid var(--ui-accent); outline-offset: 1px; }
+
+.variants { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-bottom: 14px; }
+.chip { display: inline-flex; align-items: stretch; border: 1px solid var(--ui-line); border-radius: 4px; overflow: hidden; }
+.chip button { border: 0; border-radius: 0; }
+.chip[aria-current="true"] { border-color: var(--ui-accent); box-shadow: inset 0 0 0 1px var(--ui-accent); }
+.chip .del { padding: 3px 7px; border-inline-start: 1px solid var(--ui-line); color: var(--ui-muted); }
+.variants input[type="text"] {
+  background: var(--ui-panel); border: 1px solid var(--ui-line); border-radius: 4px; padding: 3px 8px; width: 150px;
+}
+.variants label { color: var(--ui-muted); margin-inline-start: 8px; }
+
+.stage { overflow-x: auto; padding-bottom: 4px; }
+.cmp-title { font-size: 12px; color: var(--ui-muted); margin: 14px 0 4px; }
+
+.readout { display: flex; flex-wrap: wrap; gap: 6px 18px; margin-top: 12px; color: var(--ui-muted); }
+.readout b { color: var(--ui-fg); font-weight: 600; font-variant-numeric: tabular-nums; }
+.contrast { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.badge { border: 1px solid var(--ui-line); border-radius: 4px; padding: 1px 8px; font-size: 12px; font-variant-numeric: tabular-nums; }
+.badge.ok b { color: var(--ui-ok); }
+.badge.bad { border-color: var(--ui-bad); }
+.badge.bad b { color: var(--ui-bad); }
+
+.export { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; }
+.export header { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+.export header span { font-weight: 600; margin-inline-end: auto; }
+pre {
+  margin: 0; background: var(--ui-code); border: 1px solid var(--ui-line); border-radius: 4px;
+  padding: 10px 12px; overflow: auto; max-height: 340px; line-height: 1.5;
+  white-space: pre-wrap; overflow-wrap: anywhere;
+}
+main, aside, pre, .stage { scrollbar-color: var(--ui-line) transparent; }
+.notes { color: var(--ui-muted); max-width: 72ch; padding-inline-start: 18px; }
+.notes li { margin: 4px 0; }
+
+aside h2 { display: flex; align-items: baseline; gap: 8px; margin-top: 22px; padding-bottom: 4px; border-bottom: 1px solid var(--ui-line); }
+aside h2 small { font-weight: 400; color: var(--ui-muted); font-size: 11px; margin-inline-start: auto; }
+.row { padding: 6px 0; }
+.row > label { display: flex; align-items: baseline; flex-wrap: wrap; gap: 0 8px; }
+.row > label code { color: var(--ui-muted); font-size: 11px; }
+.row.changed > label::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--ui-accent); align-self: center; }
+.ctl { display: flex; align-items: center; gap: 8px; min-height: 26px; }
+.ctl input[type="range"] { flex: 1; min-width: 0; accent-color: var(--ui-accent); }
+.ctl output { width: 58px; text-align: end; font-variant-numeric: tabular-nums; }
+.ctl select, .ctl input[type="text"] {
+  flex: 1; min-width: 0; background: var(--ui-panel); border: 1px solid var(--ui-line); border-radius: 4px; padding: 3px 6px;
+}
+.ctl input[type="color"] { width: 34px; height: 24px; padding: 0; border: 1px solid var(--ui-line); border-radius: 4px; background: none; }
+.ctl .reset { padding: 0 6px; border-color: transparent; color: var(--ui-muted); visibility: hidden; }
+.row.changed .reset { visibility: visible; }
+.hint { color: var(--ui-muted); font-size: 12px; margin: 2px 0 0; }
+
+/* ---------- Simulation: Regeln und Variablennamen wie in Firefox 157 ----------
+   Quelle: browser/themes/shared/tabbrowser/tabs.css und tab.tokens.css.
+   Die Werte der Variablen setzt das Skript unten auf .fx. */
+.fx {
+  font: message-box;
+  color: var(--lwt-text-color);
+  background: var(--frame-image, none), var(--lwt-accent-color);
+  box-shadow: 0 0 0 1px var(--ui-line);
+  margin: 1px;
+  overflow: hidden;
+  min-width: 360px;
+  width: var(--win-width, calc(100% - 2px));
+  user-select: none;
+  cursor: default;
+}
+.fx svg { display: block; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+
+.fx .TabsToolbar { display: flex; align-items: stretch; }
+.fx .tabbrowser-tabs {
+  flex: 1000 1000 0;
+  min-width: 0;
+  display: flex;
+  min-height: calc(var(--tab-min-height) + 2 * var(--tab-margin-block));
+}
+.fx .scrollbox { flex: 1; min-width: 0; display: flex; overflow-x: auto; scrollbar-width: none; }
+.fx .spring { width: 28px; flex: none; }
+
+.fx .tabbrowser-tab {
+  display: flex;
+  align-items: stretch;
+  flex: 100 100 0;
+  min-width: var(--tab-min-width-pref);
+  max-width: var(--tab-max-width);
+  padding: 0 var(--tab-overflow-clip-margin);
+  overflow: clip;
+  overflow-clip-margin: var(--tab-overflow-clip-margin);
+}
+.fx .tabbrowser-tab[pinned] { flex: none; min-width: 0; max-width: none; }
+.fx .tab-stack { flex: 1; min-width: 0; display: grid; }
+.fx .tab-stack > * { grid-area: 1 / 1; }
+
+.fx .tab-background {
+  background-color: var(--tab-background-color);
+  border-radius: var(--tab-border-radius);
+  margin-block: var(--tab-margin-block);
+  min-height: var(--tab-min-height);
+  border: 1px solid transparent;
+  outline: var(--tab-border-width) solid var(--tab-border-color);
+  outline-offset: calc(-1 * var(--tab-border-width));
+}
+.fx .tabbrowser-tab:hover:not([selected]) .tab-background {
+  background-color: var(--tab-background-color-hover);
+}
+.fx .tabbrowser-tab[selected] .tab-background {
+  background-color: var(--tab-background-color-selected);
+  outline-color: var(--tab-border-color-selected);
+}
+/* Nur Firefox' eigene Themes: Verlaufsrahmen am aktiven Tab */
+.fx[data-builtin] .tabbrowser-tab[selected] .tab-background {
+  background:
+    linear-gradient(var(--tab-background-color-selected), var(--tab-background-color-selected)) padding-box,
+    linear-gradient(96deg, #b89cff 20.68%, #ff9565 79.34%) border-box;
+}
+
+.fx .tab-content {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  position: relative;
+  padding: 0 var(--tab-inline-padding);
+  color: var(--lwt-text-color);
+}
+.fx .tabbrowser-tab[selected] .tab-content { color: var(--tab-text-color-selected); }
+.fx:not([data-density="compact"]) .tabbrowser-tab[pinned] .tab-content { padding: 0 calc((var(--tab-min-height) - 16px) / 2); }
+
+.fx .tab-icon-image {
+  flex: none; width: 16px; height: 16px; border-radius: 3px;
+  margin-inline-end: var(--tab-icon-end-margin);
+  display: grid; place-items: center;
+  font: 700 10px/1 system-ui, sans-serif; color: #fff;
+}
+.fx .tabbrowser-tab[pinned] .tab-icon-image { margin-inline-end: 0; }
+.fx:not([data-favicons]) .tabbrowser-tab:not([pinned]) .tab-icon-image { display: none; }
+
+.fx .tab-label-container { flex: 1; min-width: 0; overflow: hidden; }
+.fx .tabbrowser-tab[pinned] .tab-label-container { flex: none; width: 0; }
+.fx .tab-label-container[textoverflow] {
+  mask-image: linear-gradient(to left, transparent, black var(--tab-label-mask-size));
+}
+.fx .tab-label {
+  display: block;
+  white-space: nowrap;
+  line-height: var(--tab-label-line-height);
+  font-size: var(--tab-font-size, inherit);
+}
+.fx .tabbrowser-tab[selected] .tab-label { font-weight: var(--tab-selected-weight, inherit); }
+.fx:not([data-mask-fixed]) .tabbrowser-tab[selected]:hover,
+.fx:not([data-mask-fixed]) .tabbrowser-tabs:not([closebuttons]) .tabbrowser-tab:hover { --tab-label-mask-size: 2em; }
+
+.fx .tab-close-button {
+  flex: none;
+  display: flex;
+  width: var(--tab-content-button-size);
+  height: var(--tab-content-button-size);
+  padding: var(--tab-content-button-padding);
+  margin-inline-end: calc(var(--tab-inline-padding) / -2);
+  border-radius: calc(var(--tab-border-radius) - 3px);
+}
+.fx .tab-close-button svg { width: 100%; height: 100%; }
+.fx .tab-close-button:hover { background-color: var(--tab-background-color-hover); }
+.fx .tabbrowser-tab[pinned] .tab-close-button,
+.fx .tabbrowser-tabs[closebuttons="activetab"] .tabbrowser-tab:not([selected]) .tab-close-button,
+.fx[data-close="active"] .tabbrowser-tab:not([selected]) .tab-close-button,
+.fx[data-close="never"] .tab-close-button { display: none; }
+
+/* Trennlinie: gibt es in Firefox nicht, kommt aus userChrome.css */
+.fx[data-sep] .tabbrowser-tab {
+  background-image: linear-gradient(var(--sep-color), var(--sep-color));
+  background-size: var(--sep-width) var(--sep-height);
+  background-position: left center;
+  background-repeat: no-repeat;
+}
+.fx[data-sep] .tabbrowser-tab:is([selected], :hover, :first-child),
+.fx[data-sep] .tabbrowser-tab:is([selected], :hover) + .tabbrowser-tab { background-image: none; }
+
+/* Buttons und Navigationsleiste: nur angedeutet */
+.fx .tb { flex: none; width: 32px; display: grid; place-items: center; }
+.fx .tb > i { width: 28px; height: 28px; display: grid; place-items: center; border-radius: var(--chrome-radius); }
+.fx .tb:hover > i { background-color: var(--tab-background-color-hover); }
+/* In der Tableiste richten sich die Buttons nach der Tab-Höhe (toolbarbuttons.css) */
+.fx .TabsToolbar .tb { width: calc(var(--tab-min-height) + 4px); }
+.fx .TabsToolbar .tb > i { width: var(--tab-min-height); height: var(--tab-min-height); }
+.fx .TabsToolbar .scrollbutton { width: var(--scrollbutton-width, 28px); }
+.fx .tabbrowser-tabs:not([overflow]) :is(.scrollbutton, .newtab-outer),
+.fx .tabbrowser-tabs[overflow] .newtab-inner { display: none; }
+.fx .tb svg { width: 16px; height: 16px; }
+.fx .nav-bar {
+  display: flex; align-items: stretch; height: var(--navbar-height);
+  background: var(--toolbar-background-color); color: var(--toolbar-text-color); padding: 0 4px;
+}
+.fx .urlbar {
+  flex: 1; align-self: center; height: 28px; margin-inline: clamp(8px, 12%, 180px);
+  display: flex; align-items: center; padding: 0 12px; overflow: hidden; white-space: nowrap;
+  background: var(--toolbar-field-background-color); color: var(--toolbar-field-text-color);
+  border: 1px solid var(--toolbar-field-border-color); border-radius: var(--chrome-radius);
+}
+.fx .page { height: 120px; background: Canvas; color: GrayText; display: grid; place-items: center; font: 13px system-ui, sans-serif; }
+.fx.strip-only :is(.nav-bar, .page) { display: none; }
+</style>
+</head>
+<body>
+
+<main>
+  <h1>Tab-Simulator</h1>
+  <p class="sub">Firefox 157 · Nova · horizontale Tabs. Tabs anklicken zum Auswählen, mit dem Mausrad durch die Leiste rollen.</p>
+
+  <div class="variants" id="variants"></div>
+
+  <div class="stage"><div class="fx" id="fx"></div></div>
+
+  <div class="readout" id="readout"></div>
+  <div class="contrast" id="contrast"></div>
+
+  <div id="compare"></div>
+
+  <h2>Ergebnis</h2>
+  <div class="export">
+    <section>
+      <header><span>userChrome.css</span><button data-copy="out-css">Kopieren</button><button id="dl-css">Herunterladen</button></header>
+      <pre id="out-css"></pre>
+    </section>
+    <section>
+      <header><span>Theme-Farben für manifest.json</span><button data-copy="out-theme">Kopieren</button></header>
+      <pre id="out-theme"></pre>
+    </section>
+  </div>
+
+  <h2>Was die Simulation kann und was nicht</h2>
+  <ul class="notes">
+    <li>Die Tab-Regeln und Variablennamen sind aus Firefox 157.0 übernommen; Maße und Farben der eingebauten Themes sind dort gemessen.</li>
+    <li>Schrift und Schriftgröße kommen vom System (<code>font: message-box</code>). In Firefox geöffnet entspricht das der Schrift der echten Tableiste.</li>
+    <li>Navigationsleiste, Adressfeld und Buttons sind nur angedeutet. Angeheftete Tabs sind angenähert.</li>
+    <li>Nicht simuliert: Tab-Gruppen, Ton-Symbole, Container-Linien, Ziehen, Animationen, vertikale Tabs.</li>
+    <li>Die Favicons sind Platzhalter. Firefox blendet das Symbol aus, wenn eine Seite keins hat.</li>
+  </ul>
+</main>
+
+<aside id="panel"></aside>
+
+<script>
+"use strict";
+
+/* ---------- Daten ---------- */
+
+// Firefox 157.0, Nova, gemessen bzw. aus tabs.css / tab.tokens.css
+const DENSITY = {
+  compact: { minHeight: 28, marginBlock: 4, inlinePadding: 6, navbar: 36 },
+  normal: { minHeight: 32, marginBlock: 6, inlinePadding: 8, navbar: 40 },
+};
+const TAB_CLIP_WIDTH = 140; // Pref browser.tabs.tabClipWidth
+
+const PRESETS = {
+  "fx-dark": {
+    label: "Firefox Dunkel (eingebaut)", builtin: true,
+    colors: { frame: "#252428", tab_background_text: "#f2f0f8", tab_selected: "#171519", tab_text: "#f2f0f8", tab_line: null,
+              toolbar: "#1e1d20", toolbar_text: "#fcfbff", toolbar_field: "#18171a", toolbar_field_text: "#e7e1f8", toolbar_field_border: "#3f3e42" },
+    exact: { frameImage: "linear-gradient(96deg, oklab(0.350395 0.0333667 -0.0714453 / 0.5) 39.84%, oklab(0.363806 0.0999189 0.068457 / 0.5) 101.72%)",
+             toolbar: "rgba(0, 0, 0, 0.2)", toolbar_field: "rgba(0, 0, 0, 0.2)", hover: "rgba(182, 170, 217, 0.25)" },
+  },
+  "fx-light": {
+    label: "Firefox Hell (eingebaut)", builtin: true,
+    colors: { frame: "#ffffff", tab_background_text: "#180e30", tab_selected: "#ffffff", tab_text: "#180e30", tab_line: null,
+              toolbar: "#ffffff", toolbar_text: "#15141a", toolbar_field: "#ffffff", toolbar_field_text: "#3e315f", toolbar_field_border: "#d6d5da" },
+    exact: { frameImage: "linear-gradient(96deg, oklab(0.918293 0.02586 -0.0400847 / 0.5) 39.84%, oklab(0.915892 0.0297772 0.0399772 / 0.5) 101.72%)",
+             toolbar: "rgba(255, 255, 255, 0.4)", toolbar_field: "rgba(255, 255, 255, 0.4)", hover: "rgba(117, 102, 159, 0.25)" },
+  },
+  "neutral-dark": {
+    label: "Beispiel: neutral dunkel",
+    colors: { frame: "#1e1e1e", tab_background_text: "#d4d4d4", tab_selected: "#3c3c3c", tab_text: "#ffffff", tab_line: "#8a8a8a",
+              toolbar: "#2a2a2a", toolbar_text: "#e6e6e6", toolbar_field: "#1a1a1a", toolbar_field_text: "#e6e6e6", toolbar_field_border: "#7a7a7a" },
+  },
+  "neutral-light": {
+    label: "Beispiel: neutral hell",
+    colors: { frame: "#e4e4e4", tab_background_text: "#2a2a2a", tab_selected: "#ffffff", tab_text: "#000000", tab_line: "#6e6e6e",
+              toolbar: "#f5f5f5", toolbar_text: "#1e1e1e", toolbar_field: "#ffffff", toolbar_field_text: "#1e1e1e", toolbar_field_border: "#808080" },
+  },
+};
+
+const COLOR_KEYS = [
+  ["frame", "Tableiste / Fensterrahmen"],
+  ["tab_background_text", "Text inaktiver Tabs"],
+  ["tab_selected", "Hintergrund aktiver Tab"],
+  ["tab_text", "Text aktiver Tab"],
+  ["tab_line", "Rand aktiver Tab"],
+  ["toolbar", "Navigationsleiste"],
+  ["toolbar_text", "Text und Symbole der Leiste"],
+  ["toolbar_field", "Adressfeld"],
+  ["toolbar_field_text", "Text im Adressfeld"],
+  ["toolbar_field_border", "Rahmen des Adressfelds"],
+];
+
+const TITLES = [
+  ["Posteingang (3) – mailbox.org", "M", "#2c7a4b"], ["Arch Linux – News", "A", "#1793d1"],
+  ["MDN Web Docs", "M", "#333842"], ["bschoetz/fftheme: Firefox theme", "G", "#6e40c9"],
+  ["Wikipedia – Die freie Enzyklopädie", "W", "#72777d"], ["Wetter Berlin – 14 Tage", "W", "#d9822b"],
+  ["sway(5) — Arch manual pages", "S", "#4b6fa5"], ["Fahrplanauskunft", "F", "#c0392b"],
+  ["Firefox Source Docs", "F", "#e66000"], ["Rezept: Kürbissuppe", "R", "#b7791f"],
+  ["heise online – IT-News", "h", "#555555"], ["OpenStreetMap", "O", "#7ebc6f"],
+];
+
+// Stellschrauben. def: Firefox-Standard (Zahl oder Funktion der Dichte).
+const px = v => v + " px", pct = v => v + " %";
+const STYLE = [
+  { g: "Tab-Form", tag: "userChrome.css" },
+  { k: "radius", label: "Eckenradius", code: "--tab-border-radius", min: 0, max: 24, step: 1, def: 24, fmt: px },
+  { k: "minHeight", label: "Höhe des Tabs", code: "--tab-min-height", min: 16, max: 44, step: 1, def: d => DENSITY[d].minHeight, fmt: px },
+  { k: "marginBlock", label: "Abstand oben und unten", code: "--tab-margin-block", min: 0, max: 8, step: 1, def: d => DENSITY[d].marginBlock, fmt: px },
+  { k: "gap", label: "Lücke zwischen Tabs", code: "2 × --tab-overflow-clip-margin", min: 0, max: 12, step: 1, def: 4, fmt: px },
+  { k: "inlinePadding", label: "Innenabstand links und rechts", code: "--tab-inline-padding", min: 0, max: 14, step: 1, def: d => DENSITY[d].inlinePadding, fmt: px },
+  { k: "minWidth", label: "Mindestbreite", code: "--tab-min-width-pref", min: 20, max: 200, step: 1, def: 76, fmt: px,
+    hint: "Über die Pref browser.tabs.tabMinWidth geht es nur bis 50, per CSS auch darunter." },
+  { k: "maxWidth", label: "Maximalbreite", code: "--tab-max-width", min: 60, max: 400, step: 5, def: 225, fmt: px },
+
+  { g: "Inhalt des Tabs", tag: "userChrome.css" },
+  { k: "fontSize", label: "Schriftgröße", code: ".tab-label", min: 9, max: 20, step: 0.5, def: () => systemFontSize, fmt: px },
+  { k: "lineHeight", label: "Zeilenhöhe", code: "--tab-label-line-height", min: 1, max: 2, step: 0.05, def: 1.7, fmt: v => v.toFixed(2) },
+  { k: "selWeight", label: "Schrift des aktiven Tabs", code: "font-weight", options: [["400", "normal"], ["600", "halbfett"], ["700", "fett"]], def: "400" },
+  { k: "iconEndMargin", label: "Abstand Symbol – Text", code: "--tab-icon-end-margin", min: 0, max: 10, step: 0.5, def: 5.5, fmt: px },
+  { k: "maskSize", label: "Ausblenden am Textende", code: "--tab-label-mask-size", min: 0, max: 3, step: 0.25, def: 1, fmt: v => v + " em" },
+  { k: "closeMode", label: "Schließen-Knopf", code: ".tab-close-button", def: "fx",
+    options: [["fx", "wie Firefox"], ["active", "nur auf dem aktiven Tab"], ["never", "nie"]],
+    hint: "Firefox zeigt ihn auf inaktiven Tabs nur, solange Tabs breiter als 140 px sind und die Leiste nicht überläuft." },
+  { k: "closeSize", label: "Größe des Schließen-Knopfs", code: "--tab-content-button-size", min: 12, max: 24, step: 1, def: 20, fmt: px },
+
+  { g: "Trennung inaktiver Tabs", tag: "userChrome.css" },
+  { k: "sepOn", label: "Trennlinie zwischen Tabs", code: "eigene Regel", check: true, def: false },
+  { k: "sepStrength", label: "Stärke der Linie", code: "Anteil der Textfarbe", min: 10, max: 100, step: 5, def: 50, fmt: pct },
+  { k: "sepHeight", label: "Höhe der Linie", min: 4, max: 44, step: 1, def: 16, fmt: px },
+  { k: "sepWidth", label: "Breite der Linie", min: 1, max: 3, step: 1, def: 1, fmt: px },
+  { k: "inactiveBg", label: "Hintergrund inaktiver Tabs", code: "--tab-background-color", min: 0, max: 40, step: 1, def: 0, fmt: pct },
+  { k: "inactiveBorder", label: "Rahmen inaktiver Tabs", code: "--tab-border-color", min: 0, max: 100, step: 5, def: 0, fmt: pct },
+  { k: "hoverBg", label: "Hintergrund beim Überfahren", code: "--tab-background-color-hover", min: 0, max: 40, step: 1, def: 17, fmt: pct,
+    hint: "Die drei Prozentwerte sind Anteile der Textfarbe und passen sich so jedem Theme an." },
+  { k: "borderWidth", label: "Rahmenstärke der Tabs", code: "--tab-border", min: 0, max: 3, step: 1, def: 1, fmt: px,
+    hint: "Sichtbar am aktiven Tab (eigenes Theme) und an inaktiven, sobald ihr Rahmen über 0 % liegt." },
+
+  { g: "Übrige Leiste", tag: "userChrome.css" },
+  { k: "chromeRadius", label: "Eckenradius Adressfeld und Buttons", code: "--toolbarbutton-border-radius …", min: 0, max: 24, step: 1, def: 24, fmt: px },
+];
+const SCENARIO = [
+  { g: "Szenario", tag: "nur Simulation" },
+  { k: "tabCount", label: "Offene Tabs", min: 1, max: 80, step: 1, def: 12, fmt: v => v },
+  { k: "pinned", label: "davon angeheftet", min: 0, max: 6, step: 1, def: 0, fmt: v => v },
+  { k: "winWidth", label: "Fensterbreite", min: 480, max: 2560, step: 10, def: () => Math.round($("#fx").parentElement.clientWidth - 2), fmt: px,
+    hint: "Ohne Vorgabe so breit wie der Platz hier. ↺ stellt das wieder her." },
+  { k: "favicons", label: "Seiten-Symbole zeigen", check: true, def: true },
+  { k: "density", label: "Dichte", code: "about:config · browser.uidensity", options: [["compact", "kompakt"], ["normal", "normal"]], def: "compact" },
+];
+
+/* ---------- Zustand ---------- */
+
+const $ = (s, r = document) => r.querySelector(s);
+const STORE = "fftheme-sim/v1";
+let systemFontSize = 14;
+let S = {};          // Stil: nur Abweichungen vom Firefox-Standard, dazu preset und colors
+let SC = {};         // Szenario
+let variants = {};   // gespeicherte Varianten: Name → Stil
+let compare = false;
+let selected = 2;
+
+const BUILTIN_VARIANTS = {
+  "Firefox-Standard": {},
+  "Aktuelle userChrome.css": { radius: 4, sepOn: true },
+};
+
+function load() {
+  try {
+    const d = JSON.parse(localStorage.getItem(STORE) || "{}");
+    S = d.S || {}; SC = d.SC || {}; variants = d.variants || {}; compare = !!d.compare;
+  } catch (e) { /* ohne Speicher weiterarbeiten */ }
+}
+function save() {
+  try { localStorage.setItem(STORE, JSON.stringify({ S, SC, variants, compare })); } catch (e) { /* egal */ }
+}
+
+const spec = k => STYLE.find(c => c.k === k) || SCENARIO.find(c => c.k === k);
+const def = (k, density) => { const d = spec(k).def; return typeof d === "function" ? d(density) : d; };
+const val = (st, k) => (k in st ? st[k] : def(k, SC.density || "compact"));
+const sc = k => (k in SC ? SC[k] : def(k));
+
+function theme(st) {
+  const preset = PRESETS[st.preset] || PRESETS["fx-dark"];
+  const custom = st.colors && Object.keys(st.colors).length > 0;
+  return { preset, builtin: !!preset.builtin && !custom, colors: { ...preset.colors, ...(st.colors || {}) } };
+}
+
+/* ---------- Simulation aufbauen ---------- */
+
+const ICON = {
+  close: '<svg viewBox="0 0 12 12"><path d="M2.5 2.5l7 7M9.5 2.5l-7 7"/></svg>',
+  plus: '<svg viewBox="0 0 16 16"><path d="M8 3v10M3 8h10"/></svg>',
+  left: '<svg viewBox="0 0 16 16"><path d="M10 3L5 8l5 5"/></svg>',
+  right: '<svg viewBox="0 0 16 16"><path d="M6 3l5 5-5 5"/></svg>',
+  down: '<svg viewBox="0 0 16 16"><path d="M3 6l5 5 5-5"/></svg>',
+  reload: '<svg viewBox="0 0 16 16"><path d="M13 8a5 5 0 1 1-1.5-3.6M13 2.5v3h-3"/></svg>',
+  menu: '<svg viewBox="0 0 16 16"><path d="M3 4.5h10M3 8h10M3 11.5h10"/></svg>',
+  back: '<svg viewBox="0 0 16 16"><path d="M13 8H3M7 4L3 8l4 4"/></svg>',
+  fwd: '<svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4"/></svg>',
+};
+const tb = (icon, cls = "") => `<span class="tb ${cls}"><i>${ICON[icon]}</i></span>`;
+
+function buildFx(el) {
+  el.innerHTML = `
+    <div class="TabsToolbar">
+      <div class="tabbrowser-tabs">
+        ${tb("left", "scrollbutton up")}
+        <div class="scrollbox"></div>
+        ${tb("right", "scrollbutton down")}
+        ${tb("plus", "newtab-outer")}
+      </div>
+      <span class="spring"></span>
+      ${tb("down")}
+    </div>
+    <div class="nav-bar">
+      ${tb("back")}${tb("fwd")}${tb("reload")}
+      <div class="urlbar">https://example.org/</div>
+      ${tb("menu")}
+    </div>
+    <div class="page">Seiteninhalt</div>`;
+  const box = $(".scrollbox", el);
+  box.addEventListener("wheel", e => { box.scrollLeft += e.deltaY || e.deltaX; e.preventDefault(); }, { passive: false });
+  $(".up", el).addEventListener("click", () => box.scrollBy({ left: -box.clientWidth * 0.8, behavior: "smooth" }));
+  $(".down", el).addEventListener("click", () => box.scrollBy({ left: box.clientWidth * 0.8, behavior: "smooth" }));
+  box.addEventListener("click", e => {
+    const tab = e.target.closest(".tabbrowser-tab");
+    if (tab) { selected = +tab.dataset.i; update(); }
+  });
+  new ResizeObserver(() => layout(el)).observe(el);
+}
+
+function renderTabs(el) {
+  const n = sc("tabCount"), pinned = Math.min(sc("pinned"), n);
+  selected = Math.min(selected, n - 1);
+  let html = "";
+  for (let i = 0; i < n; i++) {
+    const [title, letter, color] = TITLES[i % TITLES.length];
+    html += `<div class="tabbrowser-tab" data-i="${i}"${i === selected ? " selected" : ""}${i < pinned ? " pinned" : ""} title="${title}">
+      <div class="tab-stack"><div class="tab-background"></div>
+        <div class="tab-content">
+          <span class="tab-icon-image" style="background:${color}">${letter}</span>
+          <span class="tab-label-container"><span class="tab-label">${title}</span></span>
+          <span class="tab-close-button">${ICON.close}</span>
+        </div></div></div>`;
+  }
+  $(".scrollbox", el).innerHTML = html + tb("plus", "newtab-inner");
+}
+
+const mix = p => `color-mix(in srgb, currentColor ${p}%, transparent)`;
+
+function applyStyle(el, st) {
+  const density = sc("density"), t = theme(st), c = t.colors, v = k => val(st, k);
+  const set = (name, value) => el.style.setProperty(name, value);
+  el.dataset.density = density;
+  el.toggleAttribute("data-builtin", t.builtin);
+  el.toggleAttribute("data-favicons", sc("favicons"));
+  el.toggleAttribute("data-sep", v("sepOn"));
+  el.toggleAttribute("data-mask-fixed", "maskSize" in st);
+  el.dataset.close = v("closeMode");
+
+  set("--tab-border-radius", v("radius") + "px");
+  set("--tab-min-height", v("minHeight") + "px");
+  set("--tab-margin-block", v("marginBlock") + "px");
+  set("--tab-overflow-clip-margin", v("gap") / 2 + "px");
+  set("--tab-inline-padding", v("inlinePadding") + "px");
+  set("--tab-min-width-pref", v("minWidth") + "px");
+  set("--tab-max-width", v("maxWidth") + "px");
+  set("--tab-icon-end-margin", v("iconEndMargin") + "px");
+  set("--tab-label-line-height", v("lineHeight"));
+  set("--tab-label-mask-size", v("maskSize") + "em");
+  set("--tab-content-button-size", v("closeSize") + "px");
+  set("--tab-content-button-padding", "4px");
+  set("--tab-border-width", v("borderWidth") + "px");
+  "fontSize" in st ? set("--tab-font-size", st.fontSize + "px") : el.style.removeProperty("--tab-font-size");
+  set("--tab-selected-weight", v("selWeight"));
+  set("--chrome-radius", v("chromeRadius") + "px");
+  set("--navbar-height", DENSITY[density].navbar + "px");
+
+  set("--sep-color", mix(v("sepStrength")));
+  set("--sep-height", v("sepHeight") + "px");
+  set("--sep-width", v("sepWidth") + "px");
+  set("--tab-background-color", v("inactiveBg") ? mix(v("inactiveBg")) : "transparent");
+  set("--tab-border-color", v("inactiveBorder") ? mix(v("inactiveBorder")) : "transparent");
+  set("--tab-background-color-hover", t.builtin && !("hoverBg" in st) ? t.preset.exact.hover : mix(v("hoverBg")));
+
+  const exact = t.builtin ? t.preset.exact : {};
+  set("--lwt-accent-color", c.frame);
+  exact.frameImage ? set("--frame-image", exact.frameImage) : el.style.removeProperty("--frame-image");
+  set("--lwt-text-color", c.tab_background_text);
+  set("--tab-background-color-selected", c.tab_selected);
+  set("--tab-text-color-selected", c.tab_text);
+  set("--tab-border-color-selected", t.builtin ? "transparent" : c.tab_line || "currentColor");
+  set("--toolbar-background-color", exact.toolbar || c.toolbar);
+  set("--toolbar-text-color", c.toolbar_text);
+  set("--toolbar-field-background-color", exact.toolbar_field || c.toolbar_field);
+  set("--toolbar-field-text-color", c.toolbar_field_text);
+  set("--toolbar-field-border-color", c.toolbar_field_border);
+}
+
+// Was in Firefox JavaScript erledigt: Überlauf, Schließen-Knöpfe, Text-Überlauf
+function layout(el) {
+  const tabs = $(".tabbrowser-tabs", el), box = $(".scrollbox", el);
+  tabs.removeAttribute("overflow");
+  tabs.removeAttribute("closebuttons");
+  if (box.scrollWidth > box.clientWidth + 0.5) tabs.setAttribute("overflow", "");
+  const first = $(".tabbrowser-tab:not([pinned])", box);
+  if (tabs.hasAttribute("overflow") || (first && first.getBoundingClientRect().width <= TAB_CLIP_WIDTH)) {
+    tabs.setAttribute("closebuttons", "activetab");
+  }
+  for (const c of el.querySelectorAll(".tab-label-container")) {
+    c.toggleAttribute("textoverflow", c.scrollWidth > c.clientWidth);
+  }
+  const sel = $(".tabbrowser-tab[selected]", box);
+  if (sel) {
+    const b = box.getBoundingClientRect(), r = sel.getBoundingClientRect();
+    if (r.left < b.left) box.scrollLeft -= b.left - r.left;
+    else if (r.right > b.right) box.scrollLeft += r.right - b.right;
+  }
+  if (el.id === "fx") readout();
+}
+
+/* ---------- Anzeige: Maße und Kontraste ---------- */
+
+function metrics(el = $("#fx")) {
+  const strip = $(".TabsToolbar", el).getBoundingClientRect(), box = $(".scrollbox", el).getBoundingClientRect();
+  const rect = n => { if (!n) return null; const r = n.getBoundingClientRect(); if (!r.width && !r.height) return [0, 0, 0, 0]; return [r.left - strip.left, r.top - strip.top, r.width, r.height].map(x => Math.round(x * 10) / 10); };
+  const part = tab => tab && {
+    tab: rect(tab), bg: rect($(".tab-background", tab)), content: rect($(".tab-content", tab)),
+    icon: rect($(".tab-icon-image", tab)), labelContainer: rect($(".tab-label-container", tab)), close: rect($(".tab-close-button", tab)),
+    radius: getComputedStyle($(".tab-background", tab)).borderTopLeftRadius,
+    closeRadius: getComputedStyle($(".tab-close-button", tab)).borderTopLeftRadius,
+    fontSize: getComputedStyle($(".tab-label", tab)).fontSize,
+  };
+  const all = [...el.querySelectorAll(".tabbrowser-tab")];
+  const plain = all.filter(t => !t.hasAttribute("pinned") && !t.hasAttribute("selected"));
+  return {
+    stripHeight: Math.round(strip.height * 10) / 10,
+    windowWidth: Math.round(el.getBoundingClientRect().width),
+    overflow: $(".tabbrowser-tabs", el).hasAttribute("overflow"),
+    closebuttons: $(".tabbrowser-tabs", el).getAttribute("closebuttons"),
+    visible: all.filter(t => { const r = t.getBoundingClientRect(); return r.left >= box.left - 1 && r.right <= box.right + 1; }).length,
+    total: all.length,
+    selected: part($(".tabbrowser-tab[selected]", el)),
+    inactive: part(plain[Math.min(1, plain.length - 1)]),
+  };
+}
+
+const hex = c => [1, 3, 5].map(i => parseInt(c.slice(i, i + 2), 16));
+const lum = c => { const [r, g, b] = c.map(v => { v /= 255; return v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; }); return 0.2126 * r + 0.7152 * g + 0.0722 * b; };
+const ratio = (a, b) => { const [x, y] = [lum(a), lum(b)].sort((p, q) => q - p); return (x + 0.05) / (y + 0.05); };
+const blend = (fg, bg, p) => fg.map((v, i) => v * p / 100 + bg[i] * (1 - p / 100));
+
+function readout() {
+  const m = metrics(), t = theme(S), c = t.colors;
+  const w = m.inactive ? m.inactive.tab[2] : m.selected.tab[2];
+  const close = val(S, "closeMode") === "never" ? "nie" : val(S, "closeMode") === "active" || m.closebuttons ? "nur aktiver Tab" : "auf allen Tabs";
+  $("#readout").innerHTML =
+    `<span>Tab-Breite <b>${w} px</b></span><span>sichtbar <b>${m.visible} von ${m.total}</b> Tabs</span>` +
+    `<span>Tableiste <b>${m.stripHeight} px</b> hoch</span><span>Fenster <b>${m.windowWidth} px</b></span>` +
+    `<span>Leiste läuft über: <b>${m.overflow ? "ja" : "nein"}</b></span><span>Schließen-Knopf: <b>${close}</b></span>`;
+
+  const frame = hex(c.frame), text = hex(c.tab_background_text), items = [];
+  const add = (label, r, min) => items.push(`<span class="badge ${r >= min ? "ok" : "bad"}">${label} <b>${r.toFixed(1)} : 1</b> (min. ${min})</span>`);
+  add("Text inaktiv / Leiste", ratio(text, frame), 4.5);
+  add("Text aktiv / aktiver Tab", ratio(hex(c.tab_text), hex(c.tab_selected)), 4.5);
+  if (!t.builtin) add("Rand aktiver Tab / Leiste", ratio(c.tab_line ? hex(c.tab_line) : text, frame), 3);
+  if (val(S, "sepOn")) add("Trennlinie / Leiste", ratio(blend(text, frame, val(S, "sepStrength")), frame), 3);
+  if (val(S, "inactiveBorder")) add("Rahmen inaktiv / Leiste", ratio(blend(text, frame, val(S, "inactiveBorder")), frame), 3);
+  if (!t.builtin) add("Adressfeld-Rahmen / Leiste", ratio(hex(c.toolbar_field_border), hex(c.toolbar)), 3);
+  $("#contrast").innerHTML = items.join("") + (t.builtin ? '<span class="badge">Verlauf der eingebauten Themes nicht eingerechnet</span>' : "");
+}
+
+/* ---------- Export ---------- */
+
+function exportCss(st = S) {
+  const has = k => k in st, v = k => val(st, k), imp = " !important;";
+  const root = [], tabs = [], rules = [];
+  if (has("radius") || has("chromeRadius")) root.push(`--tab-border-radius: ${v("radius")}px${imp}`);
+  if (has("minHeight")) root.push(`--tab-min-height: ${v("minHeight")}px${imp}`);
+  if (has("marginBlock")) root.push(`--tab-margin-block: ${v("marginBlock")}px${imp}`);
+  if (has("gap")) root.push(`--tab-overflow-clip-margin: ${v("gap") / 2}px${imp}`);
+  if (has("inlinePadding")) root.push(`--tab-inline-padding: ${v("inlinePadding")}px${imp}`);
+  if (has("iconEndMargin")) root.push(`--tab-icon-end-margin: ${v("iconEndMargin")}px${imp}`);
+  if (has("lineHeight")) root.push(`--tab-label-line-height: ${v("lineHeight")}${imp}`);
+  if (has("closeSize")) root.push(`--tab-content-button-size: ${v("closeSize")}px${imp}`);
+  if (has("borderWidth")) root.push(`--tab-border: ${v("borderWidth")}px solid var(--tab-border-color)${imp}`, `--tab-outline-offset: -${v("borderWidth")}px${imp}`);
+  if (has("inactiveBg")) root.push(`--tab-background-color: ${v("inactiveBg") ? mix(v("inactiveBg")) : "transparent"}${imp}`);
+  if (has("inactiveBorder")) {
+    const b = v("inactiveBorder") ? mix(v("inactiveBorder")) : "transparent";
+    root.push(`--tab-border-color: ${b}${imp}`, `--tab-border-color-hover: ${b}${imp}`);
+  }
+  if (has("hoverBg")) root.push(`--tab-background-color-hover: ${mix(v("hoverBg"))}${imp}`);
+  if (has("chromeRadius")) root.push(`--toolbarbutton-border-radius: ${v("chromeRadius")}px${imp}`);
+  if (has("minWidth")) tabs.push(`--tab-min-width-pref: ${v("minWidth")}px${imp}`);
+  if (has("maxWidth")) tabs.push(`--tab-max-width: ${v("maxWidth")}px${imp}`);
+
+  if (has("chromeRadius")) rules.push(`.urlbar,\n#searchbar {\n  --urlbar-border-radius: ${v("chromeRadius")}px${imp}\n  --urlbarview-border-radius: ${v("chromeRadius")}px${imp}\n}`);
+  if (has("maskSize")) rules.push(`.tabbrowser-tab {\n  --tab-label-mask-size: ${v("maskSize")}em${imp}\n}`);
+  if (has("fontSize")) rules.push(`.tab-label {\n  font-size: ${v("fontSize")}px${imp}\n}`);
+  if (has("selWeight")) rules.push(`.tabbrowser-tab[selected] .tab-label {\n  font-weight: ${v("selWeight")}${imp}\n}`);
+  if (v("closeMode") === "active") rules.push(`#tabbrowser-tabs[orient="horizontal"] .tabbrowser-tab:not([selected]) .tab-close-button {\n  display: none${imp}\n}`);
+  if (v("closeMode") === "never") rules.push(`#tabbrowser-tabs[orient="horizontal"] .tab-close-button {\n  display: none${imp}\n}`);
+  if (v("sepOn")) {
+    const color = mix(v("sepStrength")), T = '#tabbrowser-tabs[orient="horizontal"] .tabbrowser-tab';
+    rules.push(
+      `/* Trennlinie zwischen inaktiven Tabs */\n${T} {\n  background-image: linear-gradient(${color}, ${color})${imp}\n` +
+      `  background-size: ${v("sepWidth")}px ${v("sepHeight")}px${imp}\n  background-position: left center${imp}\n  background-repeat: no-repeat${imp}\n}`,
+      `${T}:is([selected], [multiselected], :hover, :first-child),\n${T}:is([selected], [multiselected], :hover) + .tabbrowser-tab {\n  background-image: none${imp}\n}`);
+  }
+  const blocks = [];
+  if (root.length) blocks.push(`:root {\n  ${root.join("\n  ")}\n}`);
+  if (tabs.length) blocks.push(`#tabbrowser-tabs {\n  ${tabs.join("\n  ")}\n}`);
+  blocks.push(...rules);
+  if (!blocks.length) return "/* Keine Abweichung vom Firefox-Standard. */";
+  return `/* fftheme – userChrome.css, erzeugt mit simulator.html (Firefox 157, Nova) */\n\n${blocks.join("\n\n")}\n`;
+}
+
+function exportTheme(st = S) {
+  const t = theme(st);
+  if (t.builtin) return `// ${t.preset.label}: kein eigenes Theme nötig.\n// Sobald du eine Farbe änderst, entsteht ein eigenes Theme. Dann entfällt der\n// Verlaufsrahmen am aktiven Tab, und Firefox zeichnet eine Linie in tab_line.`;
+  const colors = Object.fromEntries(Object.entries(t.colors).filter(([, v]) => v));
+  return `"theme": ${JSON.stringify({ colors }, null, 2)}`;
+}
+
+/* ---------- Seitenleiste ---------- */
+
+function buildPanel() {
+  const panel = $("#panel");
+  let html = "";
+  const group = (list, target) => {
+    for (const c of list) {
+      if (c.g) { html += `<h2>${c.g}<small>${c.tag}</small></h2>`; continue; }
+      const id = `c-${c.k}`, code = c.code ? `<code>${c.code}</code>` : "";
+      let ctl;
+      if (c.options) ctl = `<select id="${id}">${c.options.map(([v, l]) => `<option value="${v}">${l}</option>`).join("")}</select>`;
+      else if (c.check) ctl = `<input type="checkbox" id="${id}">`;
+      else ctl = `<input type="range" id="${id}" min="${c.min}" max="${c.max}" step="${c.step}"><output></output>`;
+      html += `<div class="row" data-k="${c.k}" data-target="${target}"><label for="${id}">${c.label} ${code}</label>
+        <div class="ctl">${ctl}<button class="reset" title="Zurück zum Standard" aria-label="${c.label}: zurück zum Standard">↺</button></div>
+        ${c.hint ? `<p class="hint">${c.hint}</p>` : ""}</div>`;
+    }
+  };
+  group(SCENARIO, "SC");
+  group(STYLE, "S");
+  html += `<h2>Farben<small>Theme · manifest.json</small></h2>
+    <div class="row"><label for="c-preset">Ausgangspunkt</label><div class="ctl"><select id="c-preset">${
+      Object.entries(PRESETS).map(([k, p]) => `<option value="${k}">${p.label}</option>`).join("")}</select></div>
+      <p class="hint">Die Beispiele sind nur ein Startpunkt. Ändern einer Farbe macht daraus ein eigenes Theme.</p></div>`;
+  for (const [k, label] of COLOR_KEYS) {
+    html += `<div class="row" data-color="${k}"><label for="col-${k}">${label} <code>${k}</code></label>
+      <div class="ctl"><input type="color" id="col-${k}"><input type="text" id="hex-${k}" aria-label="${label} als Hex-Wert" spellcheck="false">
+      <button class="reset" title="Zurück zum Ausgangspunkt" aria-label="${label}: zurück zum Ausgangspunkt">↺</button></div></div>`;
+  }
+  panel.innerHTML = html;
+
+  panel.addEventListener("input", e => {
+    const row = e.target.closest(".row");
+    if (!row) return;
+    if (e.target.id === "c-preset") { S.preset = e.target.value; delete S.colors; return update(); }
+    if (row.dataset.color) {
+      const value = e.target.value.trim().toLowerCase();
+      if (!/^#[0-9a-f]{6}$/.test(value)) return;
+      (S.colors ||= {})[row.dataset.color] = value;
+      return update();
+    }
+    const k = row.dataset.k, c = spec(k), st = row.dataset.target === "S" ? S : SC;
+    st[k] = c.check ? e.target.checked : c.options ? e.target.value : +e.target.value;
+    if (st[k] === def(k, sc("density")) && k !== "winWidth") delete st[k];
+    update();
+  });
+  panel.addEventListener("click", e => {
+    if (!e.target.classList.contains("reset")) return;
+    const row = e.target.closest(".row");
+    if (row.dataset.color) { if (S.colors) delete S.colors[row.dataset.color]; }
+    else delete (row.dataset.target === "S" ? S : SC)[row.dataset.k];
+    update();
+  });
+}
+
+function syncPanel() {
+  for (const row of document.querySelectorAll(".row[data-k]")) {
+    const k = row.dataset.k, c = spec(k), st = row.dataset.target === "S" ? S : SC;
+    const v = k in st ? st[k] : def(k, sc("density")), input = $("input, select", row);
+    row.classList.toggle("changed", k in st);
+    if (c.check) input.checked = v;
+    else { input.value = v; if (!c.options) $("output", row).textContent = c.fmt(v); }
+  }
+  const t = theme(S);
+  $("#c-preset").value = S.preset || "fx-dark";
+  for (const row of document.querySelectorAll(".row[data-color]")) {
+    const k = row.dataset.color, v = t.colors[k];
+    row.classList.toggle("changed", !!(S.colors && k in S.colors));
+    $("input[type=color]", row).value = v || t.colors.tab_background_text;
+    const text = $("input[type=text]", row);
+    if (document.activeElement !== text) text.value = v || "";
+    text.placeholder = k === "tab_line" ? "nicht gesetzt: Textfarbe" : "";
+  }
+}
+
+/* ---------- Varianten ---------- */
+
+const canon = st => JSON.stringify(st, Object.keys(st).sort().concat(Object.keys(st.colors || {}).sort()));
+const allVariants = () => ({ ...BUILTIN_VARIANTS, ...variants });
+
+function buildVariants() {
+  const el = $("#variants"), typed = $("#v-name") ? $("#v-name").value : "";
+  let html = "";
+  for (const [name, st] of Object.entries(allVariants())) {
+    const current = canon(st) === canon(S);
+    html += `<span class="chip" aria-current="${current}"><button data-apply="${name}">${name}</button>${
+      name in variants ? `<button class="del" data-del="${name}" aria-label="Variante ${name} löschen">×</button>` : ""}</span>`;
+  }
+  html += `<input type="text" id="v-name" placeholder="Name der Variante" aria-label="Name der Variante"><button id="v-save">Speichern</button>
+    <label><input type="checkbox" id="v-compare"${compare ? " checked" : ""}> alle untereinander zeigen</label>`;
+  el.innerHTML = html;
+  $("#v-name").value = typed;
+}
+$("#variants").addEventListener("click", e => {
+  const d = e.target.dataset;
+  if (d.apply) { S = structuredClone(allVariants()[d.apply]); update(); }
+  else if (d.del) { delete variants[d.del]; update(); }
+  else if (e.target.id === "v-save") {
+    const name = $("#v-name").value.trim() || `Variante ${Object.keys(variants).length + 1}`;
+    variants[name] = structuredClone(S); $("#v-name").value = ""; update();
+  }
+});
+$("#variants").addEventListener("change", e => { if (e.target.id === "v-compare") { compare = e.target.checked; update(); } });
+
+function buildCompare() {
+  const host = $("#compare");
+  host.innerHTML = "";
+  if (!compare) return;
+  for (const [name, st] of Object.entries(allVariants())) {
+    const title = document.createElement("div"), stage = document.createElement("div"), fx = document.createElement("div");
+    title.className = "cmp-title"; title.textContent = name;
+    stage.className = "stage"; fx.className = "fx strip-only";
+    stage.append(fx); host.append(title, stage);
+    buildFx(fx); renderTabs(fx); applyStyle(fx, st);
+    if ("winWidth" in SC) fx.style.setProperty("--win-width", SC.winWidth + "px");
+    layout(fx);
+  }
+}
+
+/* ---------- Ablauf ---------- */
+
+function update() {
+  const fx = $("#fx");
+  "winWidth" in SC ? fx.style.setProperty("--win-width", SC.winWidth + "px") : fx.style.removeProperty("--win-width");
+  renderTabs(fx);
+  applyStyle(fx, S);
+  layout(fx);
+  syncPanel();
+  $("#out-css").textContent = exportCss();
+  $("#out-theme").textContent = exportTheme();
+  buildVariants();
+  buildCompare();
+  save();
+}
+
+document.addEventListener("click", e => {
+  const id = e.target.dataset.copy;
+  if (id) {
+    navigator.clipboard.writeText($("#" + id).textContent).then(
+      () => { e.target.textContent = "Kopiert"; setTimeout(() => (e.target.textContent = "Kopieren"), 1200); },
+      () => { getSelection().selectAllChildren($("#" + id)); });
+  }
+  if (e.target.id === "dl-css") {
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(new Blob([exportCss()], { type: "text/css" }));
+    a.download = "userChrome.css"; a.click(); URL.revokeObjectURL(a.href);
+  }
+});
+
+load();
+buildFx($("#fx"));
+systemFontSize = Math.round(parseFloat(getComputedStyle($("#fx")).fontSize) * 2) / 2;
+buildPanel();
+update();
+
+// Für Tests: Zustand setzen und Maße auslesen
+window.sim = {
+  set(style, scenario) { S = style || {}; SC = scenario || {}; update(); },
+  metrics, exportCss, exportTheme,
+};
+</script>
+</body>
+</html>

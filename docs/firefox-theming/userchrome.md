@@ -169,6 +169,9 @@ die Grenze hindurch – ein weiterer Grund, mit Variablen zu arbeiten.
   Werte der Oberfläche; Änderungen dort wirken sofort, ohne Neustart. Die Option „Popups nicht
   automatisch ausblenden“ hält Menüs zum Untersuchen offen
   ([Doku](https://firefox-source-docs.mozilla.org/devtools-user/browser_toolbox/index.html)).
+- **Simulator.** `userchrome/simulator.html` baut die Tableiste mit Firefox' Regeln und
+  Variablennamen nach, zeigt die Wirkung jeder Stellschraube sofort und erzeugt die passende
+  `userChrome.css`. `simulator.py` prüft, dass seine Maße mit dem echten Firefox übereinstimmen.
 - **Messen ohne Fenster.** Die Skripte in `userchrome-test/` starten Firefox headless mit einem
   Wegwerf-Profil und lesen berechnete Werte aus. Geeignet, um nach einem Firefox-Update zu prüfen,
   ob Variablen noch existieren und wirken.
@@ -192,6 +195,7 @@ cd docs/firefox-theming/userchrome-test
 ./mechanik.py        # Laden, Kaskade, Shadow DOM, Pref-Abfragen
 ./mechanik.py aus    # Gegenprobe: Pref aus, nichts greift
 ./variablen.py       # Wirkung der Variablen auf Tabs, Adressleiste, Buttons
+./simulator.py       # userchrome/simulator.html gegen den echten Firefox messen
 ```
 
 Die Skripte brauchen Python 3 und `firefox` im PATH. Sie öffnen kein Fenster, benutzen ein

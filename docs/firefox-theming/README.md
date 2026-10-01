@@ -29,7 +29,7 @@ Neu laden mit [`./fetch-docs.sh`](fetch-docs.sh).
 | [`nova-aenderungen.md`](nova-aenderungen.md) | Was sich mit Nova für Theme-Autoren ändert, inkl. Test-Checkliste |
 | [`kompaktmodus.md`](kompaktmodus.md) | Dichte-Einstellung, Prefs und Maße laut Firefox-Quellcode |
 | [`userchrome.md`](userchrome.md) | Wie `userChrome.css` geladen wird und kaskadiert, welche Variablen Tabs und Ecken steuern, Messwerte aus Firefox 157.0 |
-| [`userchrome-test/`](userchrome-test/) | Skripte, die Firefox headless mit Wegwerf-Profil starten und die Wirkung von `userChrome.css` messen |
+| [`userchrome-test/`](userchrome-test/) | Skripte, die Firefox headless mit Wegwerf-Profil starten und die Wirkung von `userChrome.css` messen; `simulator.py` vergleicht den Tab-Simulator (`userchrome/simulator.html`) mit dem echten Firefox |
 
 Die Zusammenfassungen sind sinngemäß, nicht wörtlich. Im Zweifel gilt die Upstream-Quelle.
 

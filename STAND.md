@@ -60,7 +60,16 @@ Die Datei ist per Symlink in dein Profil eingehängt (`<Profil>/chrome/userChrom
 erst, wenn `toolkit.legacyUserProfileCustomizations.stylesheets` in `about:config` auf `true` steht
 und Firefox neu gestartet wurde. Abschalten: Pref zurück auf `false` und neu starten.
 
-Geprüft nur headless (Screenshots mit hellem und dunklem Firefox-Theme, 12 und 40 Tabs). Nicht
+`userchrome/simulator.html` – Tab-Simulator zum Durchspielen von Varianten. Eine einzelne
+HTML-Datei, die du im Browser öffnest: links eine nachgebaute Tableiste, rechts Regler für alles,
+was wir per `userChrome.css` und Theme ansteuern können. Sie erzeugt die passende `userChrome.css`
+und die Theme-Farben zum Kopieren und merkt sich benannte Varianten. Tab-Maße stimmen mit Firefox
+157.0 überein (`userchrome-test/simulator.py`: 0 Abweichungen über 0,6 px, Standard und ein Stil
+mit allen Reglern verändert, je 6, 12 und 40 Tabs). Nicht gegen Firefox geprüft: die Farben eigener
+Themes, Hover, Dichte „normal“.
+
+Die `userChrome.css` selbst ist nur headless geprüft (Screenshots mit hellem und dunklem
+Firefox-Theme, 12 und 40 Tabs). Nicht
 geprüft: dein echtes Fenster unter Sway, angeheftete Tabs, Tab-Gruppen, Tabs beim Ziehen,
 vertikale Tabs (die Regeln greifen dort absichtlich nicht).
 
@@ -130,6 +139,7 @@ Später: F5 (Nutzung), F6 (Signierung), F7 (Name, ID, Lizenz), F8 (Mindestversio
 | `CLAUDE.md` | Arbeitsregeln: Commit + Push auf `main` nach jeder bedeutsamen Änderung |
 | `OFFENE_FRAGEN.md` | Offene und entschiedene Fragen |
 | `userchrome/userChrome.css` | Tab-Radius und Trennlinien, zum Ausprobieren |
+| `userchrome/simulator.html` | Tab-Simulator: Varianten durchspielen, CSS und Theme-Farben erzeugen |
 | `docs/firefox-theming/README.md` | Index der Doku, Quellen, Lizenzen |
 | `docs/firefox-theming/theme-keys.md` | Alle Theme-Keys mit Nova-Status |
 | `docs/firefox-theming/nova-aenderungen.md` | Nova-Änderungen, Test-Checkliste |
