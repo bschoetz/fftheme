@@ -77,7 +77,7 @@ button:hover { border-color: var(--ui-muted); }
 .badge.bad { border-color: var(--ui-bad); }
 .badge.bad b { color: var(--ui-bad); }
 
-.export { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; }
+.export { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; max-width: 900px; }
 .export header { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
 .export header span { font-weight: 600; margin-inline-end: auto; }
 pre {
@@ -159,15 +159,13 @@ aside h2 small { font-weight: 400; color: var(--ui-muted); font-size: 11px; marg
 .fx .tabbrowser-tab:hover:not([selected]) .tab-background {
   background-color: var(--tab-background-color-hover);
 }
+/* Firefox' eigene Themes zeichnen den Rand des aktiven Tabs als 1px-Verlauf in der Border-Fläche */
 .fx .tabbrowser-tab[selected] .tab-background {
-  background-color: var(--tab-background-color-selected);
-  outline-color: var(--tab-border-color-selected);
-}
-/* Nur Firefox' eigene Themes: Verlaufsrahmen am aktiven Tab */
-.fx[data-builtin] .tabbrowser-tab[selected] .tab-background {
   background:
     linear-gradient(var(--tab-background-color-selected), var(--tab-background-color-selected)) padding-box,
-    linear-gradient(96deg, #b89cff 20.68%, #ff9565 79.34%) border-box;
+    var(--tab-border-color-accent) border-box;
+  background-color: var(--tab-background-color-selected);
+  outline-color: transparent;
 }
 
 .fx .tab-content {
@@ -272,16 +270,12 @@ aside h2 small { font-weight: 400; color: var(--ui-muted); font-size: 11px; marg
   <div id="compare"></div>
 
   <h2>Ergebnis</h2>
-  <p class="sub">Zwei Dateien: Die Form steht in der <code>userChrome.css</code>, die Farben stehen im Theme (<code>manifest.json</code>).
-    In der <code>userChrome.css</code> sind keine Farben. Ohne das Theme bleibt Firefox bei den Farben des gerade aktiven Themes.</p>
+  <p class="sub">Eine Datei: Form und Farben stehen in der <code>userChrome.css</code>. Die Farben liegen über dem eingebauten
+    Firefox-Theme und gelten nur, solange es unter Add-ons und Themes ausgewählt ist.</p>
   <div class="export">
     <section>
       <header><span>userChrome.css</span><button data-copy="out-css">Kopieren</button><button id="dl-css">Herunterladen</button></header>
       <pre id="out-css"></pre>
-    </section>
-    <section>
-      <header><span>manifest.json (Theme)</span><button data-copy="out-theme">Kopieren</button><button id="dl-theme">Herunterladen</button></header>
-      <pre id="out-theme"></pre>
     </section>
   </div>
 
@@ -311,42 +305,49 @@ const TAB_CLIP_WIDTH = 140; // Pref browser.tabs.tabClipWidth
 
 const PRESETS = {
   "fx-dark": {
-    label: "Firefox Dunkel (eingebaut)", builtin: true,
+    label: "Firefox Dunkel (eingebaut)", builtin: true, base: "dark",
     colors: { frame: "#252428", tab_background_text: "#f2f0f8", tab_selected: "#171519", tab_text: "#f2f0f8", tab_line: null,
               toolbar: "#1e1d20", toolbar_text: "#fcfbff", toolbar_field: "#18171a", toolbar_field_text: "#e7e1f8", toolbar_field_border: "#3f3e42" },
     exact: { frameImage: "linear-gradient(96deg, oklab(0.350395 0.0333667 -0.0714453 / 0.5) 39.84%, oklab(0.363806 0.0999189 0.068457 / 0.5) 101.72%)",
              toolbar: "rgba(0, 0, 0, 0.2)", toolbar_field: "rgba(0, 0, 0, 0.2)", hover: "rgba(182, 170, 217, 0.25)" },
   },
   "fx-light": {
-    label: "Firefox Hell (eingebaut)", builtin: true,
+    label: "Firefox Hell (eingebaut)", builtin: true, base: "light",
     colors: { frame: "#ffffff", tab_background_text: "#180e30", tab_selected: "#ffffff", tab_text: "#180e30", tab_line: null,
               toolbar: "#ffffff", toolbar_text: "#15141a", toolbar_field: "#ffffff", toolbar_field_text: "#3e315f", toolbar_field_border: "#d6d5da" },
     exact: { frameImage: "linear-gradient(96deg, oklab(0.918293 0.02586 -0.0400847 / 0.5) 39.84%, oklab(0.915892 0.0297772 0.0399772 / 0.5) 101.72%)",
              toolbar: "rgba(255, 255, 255, 0.4)", toolbar_field: "rgba(255, 255, 255, 0.4)", hover: "rgba(117, 102, 159, 0.25)" },
   },
   "neutral-dark": {
-    label: "Beispiel: neutral dunkel",
+    label: "Beispiel: neutral dunkel", base: "dark",
     colors: { frame: "#1e1e1e", tab_background_text: "#d4d4d4", tab_selected: "#3c3c3c", tab_text: "#ffffff", tab_line: "#8a8a8a",
               toolbar: "#2a2a2a", toolbar_text: "#e6e6e6", toolbar_field: "#1a1a1a", toolbar_field_text: "#e6e6e6", toolbar_field_border: "#7a7a7a" },
   },
   "neutral-light": {
-    label: "Beispiel: neutral hell",
+    label: "Beispiel: neutral hell", base: "light",
     colors: { frame: "#e4e4e4", tab_background_text: "#2a2a2a", tab_selected: "#ffffff", tab_text: "#000000", tab_line: "#6e6e6e",
               toolbar: "#f5f5f5", toolbar_text: "#1e1e1e", toolbar_field: "#ffffff", toolbar_field_text: "#1e1e1e", toolbar_field_border: "#808080" },
   },
 };
 
+// Die eingebauten Themes, über denen die Farben liegen
+const BASE = {
+  dark: { id: "firefox-compact-dark@mozilla.org", name: "Firefox Dunkel" },
+  light: { id: "firefox-compact-light@mozilla.org", name: "Firefox Hell" },
+};
+
+// Schlüssel, Beschriftung, Firefox-Variable
 const COLOR_KEYS = [
-  ["frame", "Tableiste / Fensterrahmen"],
-  ["tab_background_text", "Text inaktiver Tabs"],
-  ["tab_selected", "Hintergrund aktiver Tab"],
-  ["tab_text", "Text aktiver Tab"],
-  ["tab_line", "Rand aktiver Tab"],
-  ["toolbar", "Navigationsleiste"],
-  ["toolbar_text", "Text und Symbole der Leiste"],
-  ["toolbar_field", "Adressfeld"],
-  ["toolbar_field_text", "Text im Adressfeld"],
-  ["toolbar_field_border", "Rahmen des Adressfelds"],
+  ["frame", "Tableiste / Fensterrahmen", "--toolbox-background-color"],
+  ["tab_background_text", "Text inaktiver Tabs", "--toolbox-text-color"],
+  ["tab_selected", "Hintergrund aktiver Tab", "--tab-background-color-selected"],
+  ["tab_text", "Text aktiver Tab", "--tab-text-color-selected"],
+  ["tab_line", "Rand aktiver Tab", "--tab-border-color-selected-…"],
+  ["toolbar", "Navigationsleiste", "--toolbar-background-color"],
+  ["toolbar_text", "Text und Symbole der Leiste", "--toolbar-text-color"],
+  ["toolbar_field", "Adressfeld", "--toolbar-field-background-color"],
+  ["toolbar_field_text", "Text im Adressfeld", "--toolbar-field-text-color"],
+  ["toolbar_field_border", "Rahmen des Adressfelds", "--toolbar-field-border-color"],
 ];
 
 const TITLES = [
@@ -393,7 +394,7 @@ const STYLE = [
   { k: "hoverBg", label: "Hintergrund beim Überfahren", code: "--tab-background-color-hover", min: 0, max: 40, step: 1, def: 17, fmt: pct,
     hint: "Die drei Prozentwerte sind Anteile der Textfarbe und passen sich so jedem Theme an." },
   { k: "borderWidth", label: "Rahmenstärke der Tabs", code: "--tab-border", min: 0, max: 3, step: 1, def: 1, fmt: px,
-    hint: "Sichtbar am aktiven Tab (eigenes Theme) und an inaktiven, sobald ihr Rahmen über 0 % liegt." },
+    hint: "Sichtbar an inaktiven Tabs, sobald ihr Rahmen über 0 % liegt. Der Rand des aktiven Tabs ist immer 1 px." },
 
   { g: "Übrige Leiste", tag: "userChrome.css" },
   { k: "chromeRadius", label: "Eckenradius Adressfeld und Buttons", code: "--toolbarbutton-border-radius …", min: 0, max: 24, step: 1, def: 24, fmt: px },
@@ -421,7 +422,7 @@ let selected = 2;
 
 const BUILTIN_VARIANTS = {
   "Firefox-Standard": {},
-  // Entspricht userchrome/userChrome.css und theme/manifest.json im Repo
+  // Entspricht userchrome/userChrome.css im Repo
   "Aktueller Stand": { radius: 8, marginBlock: 0, gap: 3, minWidth: 68, fontSize: 15, lineHeight: 1.3, iconEndMargin: 5,
     maskSize: 1.5, closeSize: 22, sepOn: true, sepHeight: 18, hoverBg: 20, chromeRadius: 8, preset: "neutral-dark",
     colors: { tab_selected: "#472200", tab_line: "#e66100", toolbar: "#1e1e1e", toolbar_field: "#000000" } },
@@ -515,7 +516,6 @@ function applyStyle(el, st) {
   const density = sc("density"), t = theme(st), c = t.colors, v = k => val(st, k);
   const set = (name, value) => el.style.setProperty(name, value);
   el.dataset.density = density;
-  el.toggleAttribute("data-builtin", t.builtin);
   el.toggleAttribute("data-favicons", sc("favicons"));
   el.toggleAttribute("data-sep", v("sepOn"));
   el.toggleAttribute("data-mask-fixed", "maskSize" in st);
@@ -552,7 +552,9 @@ function applyStyle(el, st) {
   set("--lwt-text-color", c.tab_background_text);
   set("--tab-background-color-selected", c.tab_selected);
   set("--tab-text-color-selected", c.tab_text);
-  set("--tab-border-color-selected", t.builtin ? "transparent" : c.tab_line || "currentColor");
+  set("--tab-border-color-accent", !t.builtin && c.tab_line
+    ? `linear-gradient(96deg, ${c.tab_line} 20.68%, ${c.tab_line} 79.34%)`
+    : "linear-gradient(96deg, #b89cff 20.68%, #ff9565 79.34%)");
   set("--toolbar-background-color", exact.toolbar || c.toolbar);
   set("--toolbar-text-color", c.toolbar_text);
   set("--toolbar-field-background-color", exact.toolbar_field || c.toolbar_field);
@@ -605,6 +607,17 @@ function metrics(el = $("#fx")) {
     total: all.length,
     selected: part($(".tabbrowser-tab[selected]", el)),
     inactive: part(plain[Math.min(1, plain.length - 1)]),
+    colors: {
+      frame: getComputedStyle(el).backgroundColor,
+      text: getComputedStyle($(".tab-content", plain[0] || all[0])).color,
+      selectedBg: getComputedStyle($(".tabbrowser-tab[selected] .tab-background", el)).backgroundColor,
+      selectedText: getComputedStyle($(".tabbrowser-tab[selected] .tab-content", el)).color,
+      toolbar: getComputedStyle($(".nav-bar", el)).backgroundColor,
+      toolbarText: getComputedStyle($(".nav-bar", el)).color,
+      field: getComputedStyle($(".urlbar", el)).backgroundColor,
+      fieldText: getComputedStyle($(".urlbar", el)).color,
+      fieldBorder: getComputedStyle($(".urlbar", el)).borderTopColor,
+    },
   };
 }
 
@@ -626,7 +639,7 @@ function readout() {
   const add = (label, r, min) => items.push(`<span class="badge ${r >= min ? "ok" : "bad"}">${label} <b>${r.toFixed(1)} : 1</b> (min. ${min})</span>`);
   add("Text inaktiv / Leiste", ratio(text, frame), 4.5);
   add("Text aktiv / aktiver Tab", ratio(hex(c.tab_text), hex(c.tab_selected)), 4.5);
-  if (!t.builtin) add("Rand aktiver Tab / Leiste", ratio(c.tab_line ? hex(c.tab_line) : text, frame), 3);
+  if (!t.builtin && c.tab_line) add("Rand aktiver Tab / Leiste", ratio(hex(c.tab_line), frame), 3);
   if (val(S, "sepOn")) add("Trennlinie / Leiste", ratio(blend(text, frame, val(S, "sepStrength")), frame), 3);
   if (val(S, "inactiveBorder")) add("Rahmen inaktiv / Leiste", ratio(blend(text, frame, val(S, "inactiveBorder")), frame), 3);
   if (!t.builtin) add("Adressfeld-Rahmen / Leiste", ratio(hex(c.toolbar_field_border), hex(c.toolbar)), 3);
@@ -674,23 +687,32 @@ function exportCss(st = S) {
   if (root.length) blocks.push(`:root {\n  ${root.join("\n  ")}\n}`);
   if (tabs.length) blocks.push(`#tabbrowser-tabs {\n  ${tabs.join("\n  ")}\n}`);
   blocks.push(...rules);
+  const t = theme(st);
+  if (!t.builtin) {
+    const c = t.colors, base = BASE[t.preset.base], m = p => `color-mix(in srgb, currentColor ${p}%, transparent)`;
+    const lines = [
+      `--toolbox-background-color: ${c.frame}`, `--toolbox-background-color-inactive: ${c.frame}`, `--toolbox-background-image: none`,
+      `--toolbox-text-color: ${c.tab_background_text}`,
+      `--tab-background-color-selected: ${c.tab_selected}`, `--tab-text-color-selected: ${c.tab_text}`,
+      ...(c.tab_line ? [`--tab-border-color-selected-leading: ${c.tab_line}`, `--tab-border-color-selected-trailing: ${c.tab_line}`] : []),
+      `--toolbar-background-color: ${c.toolbar}`, `--toolbar-text-color: ${c.toolbar_text}`,
+      `--toolbar-field-background-color: ${c.toolbar_field}`, `--toolbar-field-background-color-focus: ${c.toolbar_field}`,
+      `--toolbar-field-text-color: ${c.toolbar_field_text}`, `--toolbar-field-border-color: ${c.toolbar_field_border}`,
+    ];
+    const neutral = [
+      `--toolbarbutton-icon-fill: currentColor`,
+      `--toolbarbutton-background-color-hover: ${m(17)}`, `--toolbarbutton-background-color-active: ${m(30)}`,
+      `--tab-close-button-text-color: currentColor`, `--tab-close-button-text-color-hover: currentColor`, `--tab-close-button-text-color-active: currentColor`,
+      `--urlbar-box-background-color: ${m(16)}`, `--urlbar-box-background-color-hover: ${m(22)}`, `--urlbar-box-background-color-active: ${m(30)}`,
+    ];
+    const decl = list => list.map(l => `  ${l}${imp}`).join("\n");
+    blocks.push(
+      `/* Farben: liegen über dem eingebauten Theme „${base.name}“ und gelten nur, solange es aktiv ist */\n` +
+      `:root[theme-effective-id="${base.id}"] {\n${decl(lines)}\n` +
+      `  /* Neutral statt lila getönt: Icons, Schließen-Kreuz, Hover, Plaketten im Adressfeld */\n${decl(neutral)}\n}`);
+  }
   if (!blocks.length) return "/* Keine Abweichung vom Firefox-Standard. */";
   return `/* fftheme – userChrome.css, erzeugt mit simulator.html (Firefox 157, Nova) */\n\n${blocks.join("\n\n")}\n`;
-}
-
-function exportTheme(st = S) {
-  const t = theme(st);
-  if (t.builtin) return `// ${t.preset.label}: kein eigenes Theme nötig.\n// Sobald du eine Farbe änderst, entsteht ein eigenes Theme. Dann entfällt der\n// Verlaufsrahmen am aktiven Tab, und Firefox zeichnet eine Linie in tab_line.`;
-  const colors = Object.fromEntries(Object.entries(t.colors).filter(([, v]) => v));
-  const dark = lum(hex(t.colors.tab_background_text)) > lum(hex(t.colors.frame));
-  return JSON.stringify({
-    manifest_version: 3,
-    name: "fftheme",
-    version: "0.1",
-    description: "Neutral dark theme for Firefox 157+ (Nova), made for compact mode and many tabs.",
-    browser_specific_settings: { gecko: { id: "fftheme@bschoetz", strict_min_version: "157.0" } },
-    theme: { colors, properties: { color_scheme: dark ? "dark" : "light" } },
-  }, null, 2) + "\n";
 }
 
 /* ---------- Seitenleiste ---------- */
@@ -713,12 +735,12 @@ function buildPanel() {
   };
   group(SCENARIO, "SC");
   group(STYLE, "S");
-  html += `<h2>Farben<small>Theme · manifest.json</small></h2>
+  html += `<h2>Farben<small>userChrome.css</small></h2>
     <div class="row"><label for="c-preset">Ausgangspunkt</label><div class="ctl"><select id="c-preset">${
       Object.entries(PRESETS).map(([k, p]) => `<option value="${k}">${p.label}</option>`).join("")}</select></div>
-      <p class="hint">Die Beispiele sind nur ein Startpunkt. Ändern einer Farbe macht daraus ein eigenes Theme.</p></div>`;
-  for (const [k, label] of COLOR_KEYS) {
-    html += `<div class="row" data-color="${k}"><label for="col-${k}">${label} <code>${k}</code></label>
+      <p class="hint">Geänderte Farben kommen als eigener Block in die userChrome.css und liegen dann über dem eingebauten Firefox-Theme (dunkel oder hell, je nach Ausgangspunkt). Die Beispiele sind nur ein Startpunkt.</p></div>`;
+  for (const [k, label, code] of COLOR_KEYS) {
+    html += `<div class="row" data-color="${k}"><label for="col-${k}">${label} <code>${code}</code></label>
       <div class="ctl"><input type="color" id="col-${k}"><input type="text" id="hex-${k}" aria-label="${label} als Hex-Wert" spellcheck="false">
       <button class="reset" title="Zurück zum Ausgangspunkt" aria-label="${label}: zurück zum Ausgangspunkt">↺</button></div></div>`;
   }
@@ -764,7 +786,7 @@ function syncPanel() {
     $("input[type=color]", row).value = v || t.colors.tab_background_text;
     const text = $("input[type=text]", row);
     if (document.activeElement !== text) text.value = v || "";
-    text.placeholder = k === "tab_line" ? "nicht gesetzt: Textfarbe" : "";
+    text.placeholder = k === "tab_line" ? "nicht gesetzt: Firefox-Verlauf" : "";
   }
 }
 
@@ -822,7 +844,6 @@ function update() {
   layout(fx);
   syncPanel();
   $("#out-css").textContent = exportCss();
-  $("#out-theme").textContent = exportTheme();
   buildVariants();
   buildCompare();
   save();
@@ -840,11 +861,6 @@ document.addEventListener("click", e => {
     a.href = URL.createObjectURL(new Blob([exportCss()], { type: "text/css" }));
     a.download = "userChrome.css"; a.click(); URL.revokeObjectURL(a.href);
   }
-  if (e.target.id === "dl-theme") {
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(new Blob([exportTheme()], { type: "application/json" }));
-    a.download = "manifest.json"; a.click(); URL.revokeObjectURL(a.href);
-  }
 });
 
 load();
@@ -856,7 +872,7 @@ update();
 // Für Tests: Zustand setzen und Maße auslesen
 window.sim = {
   set(style, scenario) { S = style || {}; SC = scenario || {}; update(); },
-  metrics, exportCss, exportTheme,
+  metrics, exportCss,
 };
 </script>
 </body>

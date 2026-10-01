@@ -3,8 +3,9 @@
 
 Misst die Tableiste in Firefox (Chrome-Kontext) und im Simulator (als Seite
 geladen) für mehrere Tab-Zahlen: einmal mit Firefox-Standard, einmal mit einem
-Stil, der jede Stellschraube verändert. Dessen userChrome.css erzeugt der
-Simulator selbst; Firefox wird damit ein zweites Mal gestartet.
+Stil, der jede Stellschraube und die Farben verändert. Dessen userChrome.css
+erzeugt der Simulator selbst; Firefox wird damit ein zweites Mal gestartet.
+Unterlage ist in beiden Läufen das eingebaute Theme „Firefox Dunkel“.
 
     ./simulator.py
 """
@@ -24,6 +25,7 @@ STYLE = {
     "iconEndMargin": 3, "maskSize": 0.5, "closeMode": "active", "closeSize": 16,
     "sepOn": True, "sepStrength": 60, "sepHeight": 12, "sepWidth": 2,
     "inactiveBg": 8, "inactiveBorder": 30, "hoverBg": 25, "borderWidth": 2, "chromeRadius": 6,
+    "preset": "neutral-dark", "colors": {"frame": "#202428", "tab_selected": "#472200", "tab_line": "#e66100"},
 }
 
 THEME = """
@@ -84,6 +86,17 @@ return {
   total: all.length,
   selected: part(gBrowser.selectedTab),
   inactive: part(all[1]),
+  colors: {
+    frame: cs(document.body).backgroundColor,
+    text: cs(all[0].querySelector(".tab-content")).color,
+    selectedBg: cs(gBrowser.selectedTab.querySelector(".tab-background")).backgroundColor,
+    selectedText: cs(gBrowser.selectedTab.querySelector(".tab-content")).color,
+    toolbar: cs(q("#nav-bar")).backgroundColor,
+    toolbarText: cs(q("#nav-bar")).color,
+    field: cs(q(".urlbar-background")).backgroundColor,
+    fieldText: cs(q("#urlbar-input")).color,
+    fieldBorder: cs(q(".urlbar-background")).borderTopColor,
+  },
 };
 """
 PINNED = """

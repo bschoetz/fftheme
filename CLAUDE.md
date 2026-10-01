@@ -2,9 +2,14 @@
 
 ## Projekt
 
-Minimalistisches, gut benutzbares Firefox-Theme für das Nova-Design (Firefox 157+), ausgelegt auf
-den Kompaktmodus. Das Theme entsteht gemeinsam mit dem Nutzer: Gestaltungsentscheidungen trifft er,
+Minimalistisches, gut benutzbares Firefox-Aussehen für das Nova-Design (Firefox 157+), ausgelegt
+auf den Kompaktmodus. Es entsteht gemeinsam mit dem Nutzer: Gestaltungsentscheidungen trifft er,
 nicht Claude.
+
+Seit E5 (`OFFENE_FRAGEN.md`) steht alles in einer Datei, `userchrome/userChrome.css`: Form und
+Farben. Die Farben liegen über dem eingebauten Theme „Firefox Dunkel“. Die Datei wird mit
+`userchrome/simulator.html` erzeugt; die Variante „Aktueller Stand“ dort muss ihr entsprechen.
+`theme/` ist geparkt.
 
 Aktueller Wissensstand und nächste Schritte: [`STAND.md`](STAND.md). Zu Beginn jeder Sitzung lesen
 und am Ende aktualisieren.
@@ -30,9 +35,10 @@ und am Ende aktualisieren.
     Änderungen und Test-Checkliste
   - `docs/firefox-theming/upstream/firefox-source/theme.schema.json` – was Firefox tatsächlich
     akzeptiert
-- Ein Static Theme setzt nur Farben, Bilder und Verläufe. Form, Abstände, Icons, Akzentfarbe und
-  UI-Dichte sind nicht erreichbar. Wünsche, die das brauchen, nicht stillschweigend über
-  `userChrome.css` lösen, sondern als Frage aufnehmen.
+- Variablen und Selektoren für die `userChrome.css` nicht aus dem Gedächtnis verwenden:
+  [`docs/firefox-theming/userchrome.md`](docs/firefox-theming/userchrome.md) nachsehen und Neues
+  headless messen (`docs/firefox-theming/userchrome-test/`), bevor es in die Datei kommt.
+- Die Theme-Keys unten gelten nur noch für das geparkte `theme/`.
 - Kontrast: Text mindestens 4,5 : 1, UI-Elemente (Rahmen, Icons) mindestens 3 : 1. Bei jeder
   Farbänderung nachrechnen.
 
@@ -48,7 +54,12 @@ und am Ende aktualisieren.
 
 ## Testen
 
-Themes müssen für Release-Firefox signiert sein; zum Entwickeln temporär laden:
+`userChrome.css`: Änderungen wirken nach einem Firefox-Neustart. Vorher headless prüfen:
+`docs/firefox-theming/userchrome-test/simulator.py` (Simulator gegen Firefox) und ein Screenshot
+mit `mn.py`.
+
+Nur für das geparkte Theme – Themes müssen für Release-Firefox signiert sein; zum Entwickeln
+temporär laden:
 
 - `about:debugging#/runtime/this-firefox` → „Temporäres Add-on laden“ → `manifest.json` wählen.
   Hält bis zum Neustart.

@@ -1,8 +1,9 @@
 # Stand und nächste Schritte
 
-Stand: 01.10.2026. Es gibt eine `userChrome.css` (Form) und ein erstes Theme (Farben), beide nach
-deinen Einstellungen im Simulator. Das Theme ist noch nicht signiert und hält deshalb nur bis zum
-nächsten Neustart (F6). Diese Datei ist der Einstiegspunkt, um weiterzumachen.
+Stand: 01.10.2026. Form und Farben stehen in einer Datei, `userchrome/userChrome.css`, nach deinen
+Einstellungen im Simulator. Die Farben liegen über dem eingebauten Theme „Firefox Dunkel“ (E5). Die
+Datei ist in dein Profil eingehängt und überlebt Neustarts. Diese Datei hier ist der Einstiegspunkt,
+um weiterzumachen.
 
 ## Was wir wollen
 
@@ -52,23 +53,17 @@ Belegt durch Mozillas Doku und den Firefox-157-Quellcode, Details in `docs/firef
     Tab-Radius 24 px und Leistenhöhe 36 px (gemessen). Es verschwinden nur Novas Farbmerkmale:
     Verlauf im Hintergrund, Verlaufsrahmen am aktiven Tab, lila Akzentfarbe.
 
+11. **Farben gehen auch per `userChrome.css`.** Ein Block mit Firefox' Farbvariablen über „Firefox
+    Dunkel“ ergibt headless dasselbe Bild wie ein eigenes Theme mit denselben Farben: Leiste,
+    Tabs, Navigationsleiste, Adressfeld, Icons und Hover stimmen überein. Unterschiede: keine 1 px
+    dunkle Linie zwischen Tableiste und Navigationsleiste; Menüs, Sidebar, Akzentfarbe und Fokusring
+    bleiben die von „Firefox Dunkel“.
+
 ## Was es gibt
 
-`theme/manifest.json` – das Theme mit deinen Farben aus dem Simulator (01.10.2026): Leiste und
-Navigationsleiste `#1e1e1e`, aktiver Tab `#472200` mit Rand `#e66100`, Adressfeld `#000000`, Text
-`#d4d4d4` / `#e6e6e6` / `#ffffff`. Keine Bilder, also kein Verlauf. Nur eine dunkle Variante (F3).
-`web-ext lint` ohne Befund; alle Kontraste über den Mindestwerten. Headless mit der
-`userChrome.css` zusammen geladen: Farben greifen, der aktive Tab bekommt die Linie in `tab_line`.
+`userchrome/userChrome.css` – dein Stand vom 01.10.2026, im Simulator eingestellt.
 
-**Laden:** `about:debugging#/runtime/this-firefox` → „Temporäres Add-on laden…“ →
-`theme/manifest.json`. Das hält bis zum Neustart. Dauerhaft geht es in deinem Firefox nur signiert:
-Die Arch-Version verlangt die Signatur fest (`MOZ_REQUIRE_SIGNING`), `xpinstall.signatures.required
-= false` ändert daran nichts (getestet). → F6
-
-Nicht gesetzt und damit Firefox überlassen: Sidebar, Menüs/Panels, Icons, Neuer-Tab-Seite,
-Trennlinien der Toolbar.
-
-`userchrome/userChrome.css` – dein Zwischenstand vom 01.10.2026, im Simulator eingestellt:
+Form:
 
 - Radius 8 px für Tabs, Adressfeld und Buttons (Firefox: 24 px).
 - Tableiste 28 px hoch statt 36 px: kein Abstand über und unter den Tabs.
@@ -79,49 +74,48 @@ Trennlinien der Toolbar.
 - Zeilenhöhe 1,3. Du hattest 1 eingestellt; damit schneidet Firefox Unterlängen ab (g, p, y). 1,3
   ändert sonst nichts, weil die Tab-Höhe von `--tab-min-height` kommt.
 
-Im Simulator ist das zusammen mit den Theme-Farben die Variante „Aktueller Stand“.
+Farben (eigener Block am Ende der Datei, gilt nur mit „Firefox Dunkel“):
+
+- Leiste und Navigationsleiste `#1e1e1e`, kein Verlauf.
+- Aktiver Tab `#472200` mit Rand `#e66100`, Text `#ffffff`; inaktive Tabs Text `#d4d4d4`.
+- Adressfeld `#000000`, Rahmen `#7a7a7a`, Text `#e6e6e6`.
+- Icons, Schließen-Kreuz, Hover und Plaketten im Adressfeld neutral statt lila getönt.
+- Alle Kontraste über den Mindestwerten (Text 11,2 und 14,0; Rand 4,8; Trennlinie 3,8; Rahmen 3,9).
+
+Nicht überschrieben und damit weiter „Firefox Dunkel“: Menüs und Panels, Sidebar, Neuer-Tab-Seite,
+Akzentfarbe und Fokusring (Nova-Lila, z. B. der Ring ums Adressfeld beim Tippen).
+
+Im Simulator ist das die Variante „Aktueller Stand“; sie erzeugt exakt diese Datei.
 
 Die Datei ist per Symlink in dein Profil eingehängt (`<Profil>/chrome/userChrome.css`), die Pref
-`toolkit.legacyUserProfileCustomizations.stylesheets` steht auf `true`; laut dir greift die Form im
-echten Fenster. Änderungen wirken nach einem Neustart. Abschalten: Pref auf `false` und neu starten.
+`toolkit.legacyUserProfileCustomizations.stylesheets` steht auf `true`. Voraussetzung für die
+Farben: unter Add-ons und Themes ist „Dunkel“ ausgewählt. Änderungen wirken nach einem Neustart.
+Abschalten: Pref auf `false` und neu starten.
+
+`theme/manifest.json` – geparkt. Ein eigenes Theme mit denselben Farben; es wird seit E5 nicht mehr
+benutzt und nicht mehr gepflegt, weil es unsigniert nur bis zum Neustart hält.
 
 `userchrome/simulator.html` – Tab-Simulator zum Durchspielen von Varianten. Eine einzelne
 HTML-Datei, die du im Browser öffnest: links eine nachgebaute Tableiste, rechts Regler für alles,
-was wir per `userChrome.css` und Theme ansteuern können. Sie erzeugt die passende `userChrome.css`
-und die Theme-Farben zum Kopieren und merkt sich benannte Varianten. Tab-Maße stimmen mit Firefox
-157.0 überein (`userchrome-test/simulator.py`: 0 Abweichungen über 0,6 px, Standard und ein Stil
-mit allen Reglern verändert, je 6, 12 und 40 Tabs). Nicht gegen Firefox geprüft: die Farben eigener
-Themes, Hover, Dichte „normal“.
+was wir ansteuern können, Form wie Farben. Sie erzeugt die passende `userChrome.css` zum Kopieren
+und merkt sich benannte Varianten. Tab-Maße und Farben stimmen mit Firefox 157.0 überein
+(`userchrome-test/simulator.py`: 0 Abweichungen, Standard und ein Stil mit allen Reglern und Farben
+verändert, je 6, 12 und 40 Tabs). Nicht gegen Firefox geprüft: Hover, Dichte „normal“.
 
-Die `userChrome.css` selbst ist nur headless geprüft (Screenshots mit dunklem Firefox-Theme, 12
-und 40 Tabs). Nicht
-geprüft: dein echtes Fenster unter Sway, angeheftete Tabs, Tab-Gruppen, Tabs beim Ziehen,
-vertikale Tabs (die Regeln greifen dort absichtlich nicht).
+Die Form hast du im echten Fenster gesehen. Die Farben per CSS sind nur headless geprüft
+(Screenshots mit „Firefox Dunkel“, 12 Tabs). Nicht geprüft: inaktives Fenster, privates Fenster,
+angeheftete Tabs, Tab-Gruppen, Tabs beim Ziehen, vertikale Tabs (die Tab-Regeln greifen dort
+absichtlich nicht).
 
 ## Was wir noch nicht wissen
 
-- **Wie das Theme in deinem echten Fenster aussieht.** Geprüft ist es nur headless. Die Form
-  (`userChrome.css`) hast du gesehen, die Farben noch nicht.
-- Wie Theme und CSS unter Windows und macOS aussehen (Fensterknöpfe in der Tableiste, andere
+- **Wie die Farben in deinem echten Fenster aussehen.** Geprüft sind sie nur headless.
+- Wie das CSS unter Windows und macOS aussieht (Fensterknöpfe in der Tableiste, andere
   Systemschrift) – nicht getestet.
 - Wie sich die Variablen auf Menüs, Panels, Sidebar und vertikale Tabs auswirken – nicht gemessen.
 - Wie Firefox unter Sway die System-Akzentfarbe bestimmt und ob sie zu einem neutralen Theme passt.
 - Ob die Angabe „✓ unverändert“ in `theme-keys.md` für jeden Key stimmt – sie beruht auf Mozillas
   Aussage, die MDN-Referenz war zum Abrufzeitpunkt noch nicht auf Nova aktualisiert.
-
-## Die drei Hebel
-
-| Wunsch | Theme | `about:config` | `userChrome.css` |
-| --- | --- | --- | --- |
-| Neutrale Farben, keine Verläufe | ja | – | – |
-| Aktiver Tab erkennbar, Text lesbar | ja | – | ja (Schriftgröße) |
-| Geringere Höhe | – | `browser.uidensity = 1` | ja, weiter |
-| Schmalere Tabs | – | `browser.tabs.tabMinWidth` ≥ 50 | ja, auch darunter |
-| Eckige Tabs ohne Lücken | – | – | nur hier |
-| Eckige Adressleiste und Buttons | – | – | nur hier |
-
-Wir arbeiten mit Theme plus `userChrome.css` (Variante C in F2; von dir benutzt, aber noch nicht
-ausdrücklich entschieden).
 
 ## Offene Entscheidungen
 
@@ -129,32 +123,28 @@ Vollständig in `OFFENE_FRAGEN.md`.
 
 | Frage | Blockiert |
 | --- | --- |
-| **F7** – Name, ID, Lizenz | Signatur, Weitergabe |
-| **F6** – Theme signieren (AMO-Konto nötig)? | dauerhafte Nutzung des Themes |
-| **F13** – Wie geben wir Theme und CSS weiter? | Installationsskript, Releases |
-| **F3** – hell, dunkel oder beides? | Weitergabe (bisher nur dunkel) |
-| **F2** – Theme plus `userChrome.css` bestätigen | nichts, nur festhalten |
+| **F7** – Name und Lizenz | Weitergabe |
+| **F3** – auch eine helle Variante (Block über „Firefox Hell“)? | Weitergabe an Leute mit hellem Firefox |
+| Akzentfarbe und Fokusring: Nova-Lila lassen oder auf dein Orange setzen? | nichts, Optik |
 
 Später: F4 (Farbrichtung, vorläufig E4), F5 (Nutzung), F12 (was bei schmalen Tabs wegfallen darf),
 F8–F11.
 
 ## Nächste Schritte
 
-1. **Du: Theme ansehen.** `about:debugging#/runtime/this-firefox` → „Temporäres Add-on laden…“ →
-   `theme/manifest.json`. Im Alltag mit vielen Tabs ansehen, auch Menüs, Sidebar, angeheftete Tabs.
-   Was stört, im Simulator ändern oder mir sagen.
-2. **Du: F7 und F6 entscheiden.** Name, ID und Lizenz festlegen, AMO-Konto mit API-Schlüssel
-   anlegen. Danach signiere ich das Theme „unlisted“; erst dann bleibt es nach einem Neustart.
-3. **Claude, ohne weitere Entscheidung möglich: Theme vervollständigen.** Vorschlag für die Bereiche,
-   die bisher Firefox überlassen sind (Sidebar, Menüs/Panels, Icons, Hover der Buttons,
-   Neuer-Tab-Seite, Trennlinien), abgeleitet aus deinen zehn Farben; Kontraste rechnen, headless
-   laden, Checkliste aus `nova-aenderungen.md`. Außerdem prüfen, dass das Theme ohne CSS ordentlich
-   aussieht.
-4. **Helle Variante** (F3), sobald die dunkle steht – nötig für die Weitergabe.
-5. **Weitergabe vorbereiten** (F13): CSS nach `chrome/fftheme/fftheme.css` mit `@import`-Zeile
-   umbauen, Installationsskript für Linux, Optionen über Prefs, Anleitung ins README. Danach
-   PowerShell-Skript für Windows und die Messskripte in GitHub Actions.
-6. **Erstes Release:** signierte `.xpi`, CSS-Paket und Skripte auf GitHub.
+1. **Du: Firefox neu starten und ansehen.** Voraussetzung: Theme „Dunkel“ ausgewählt. Im Alltag mit
+   vielen Tabs ansehen, auch Menüs, Sidebar, inaktives und privates Fenster. Was stört, im Simulator
+   ändern oder mir sagen.
+2. **Restbereiche entscheiden:** Menüs, Sidebar, Neuer-Tab-Seite, Akzentfarbe/Fokusring. Was davon
+   neutral oder orange werden soll, kommt als weitere Variablen in den Farbblock; vorher messen.
+3. **Weitergabe vorbereiten:** CSS nach `chrome/fftheme/fftheme.css` mit `@import`-Zeile umbauen,
+   Installationsskript für Linux (legt die Datei ab, setzt die Pref in `user.js`), Anleitung ins
+   README inklusive „Theme Dunkel auswählen“. Danach PowerShell-Skript für Windows.
+4. **Optionen über Prefs** (`@media -moz-pref("fftheme.…")`): Farben, Trennlinien, schmale Tabs
+   einzeln schaltbar.
+5. **Absichern:** Messskripte in GitHub Actions gegen neue Firefox-Versionen laufen lassen; auf
+   Windows und macOS ansehen.
+6. **Erstes Release** auf GitHub: CSS-Paket und Skripte.
 
 ## Wo was steht
 
@@ -163,9 +153,9 @@ F8–F11.
 | `README.md` | Projektziel (englisch) |
 | `CLAUDE.md` | Arbeitsregeln: Commit + Push auf `main` nach jeder bedeutsamen Änderung |
 | `OFFENE_FRAGEN.md` | Offene und entschiedene Fragen |
-| `theme/manifest.json` | Das Theme: Farben |
-| `userchrome/userChrome.css` | Form der Tabs, Trennlinien, Radius von Adressfeld und Buttons |
-| `userchrome/simulator.html` | Tab-Simulator: Varianten durchspielen, CSS und Theme-Farben erzeugen |
+| `userchrome/userChrome.css` | Alles: Form der Tabs, Trennlinien, Radien und die Farben |
+| `theme/manifest.json` | Geparkt: eigenes Theme mit denselben Farben, nicht mehr benutzt |
+| `userchrome/simulator.html` | Tab-Simulator: Varianten durchspielen, die `userChrome.css` erzeugen |
 | `docs/firefox-theming/README.md` | Index der Doku, Quellen, Lizenzen |
 | `docs/firefox-theming/theme-keys.md` | Alle Theme-Keys mit Nova-Status |
 | `docs/firefox-theming/nova-aenderungen.md` | Nova-Änderungen, Test-Checkliste |

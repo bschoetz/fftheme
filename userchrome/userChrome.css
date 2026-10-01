@@ -45,3 +45,31 @@
 #tabbrowser-tabs[orient="horizontal"] .tabbrowser-tab:is([selected], [multiselected], :hover) + .tabbrowser-tab {
   background-image: none !important;
 }
+
+/* Farben: liegen über dem eingebauten Theme „Firefox Dunkel“ und gelten nur, solange es aktiv ist */
+:root[theme-effective-id="firefox-compact-dark@mozilla.org"] {
+  --toolbox-background-color: #1e1e1e !important;
+  --toolbox-background-color-inactive: #1e1e1e !important;
+  --toolbox-background-image: none !important;
+  --toolbox-text-color: #d4d4d4 !important;
+  --tab-background-color-selected: #472200 !important;
+  --tab-text-color-selected: #ffffff !important;
+  --tab-border-color-selected-leading: #e66100 !important;
+  --tab-border-color-selected-trailing: #e66100 !important;
+  --toolbar-background-color: #1e1e1e !important;
+  --toolbar-text-color: #e6e6e6 !important;
+  --toolbar-field-background-color: #000000 !important;
+  --toolbar-field-background-color-focus: #000000 !important;
+  --toolbar-field-text-color: #e6e6e6 !important;
+  --toolbar-field-border-color: #7a7a7a !important;
+  /* Neutral statt lila getönt: Icons, Schließen-Kreuz, Hover, Plaketten im Adressfeld */
+  --toolbarbutton-icon-fill: currentColor !important;
+  --toolbarbutton-background-color-hover: color-mix(in srgb, currentColor 17%, transparent) !important;
+  --toolbarbutton-background-color-active: color-mix(in srgb, currentColor 30%, transparent) !important;
+  --tab-close-button-text-color: currentColor !important;
+  --tab-close-button-text-color-hover: currentColor !important;
+  --tab-close-button-text-color-active: currentColor !important;
+  --urlbar-box-background-color: color-mix(in srgb, currentColor 16%, transparent) !important;
+  --urlbar-box-background-color-hover: color-mix(in srgb, currentColor 22%, transparent) !important;
+  --urlbar-box-background-color-active: color-mix(in srgb, currentColor 30%, transparent) !important;
+}

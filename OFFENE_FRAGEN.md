@@ -3,72 +3,9 @@
 Hier sammelt Claude Fragen, die nur du entscheiden kannst. Antworte einfach unter der jeweiligen
 Frage (oder im Chat) – entschiedene Fragen wandern nach unten in „Entschieden“.
 
-Reihenfolge = Dringlichkeit. F2 und F12 bestimmen, was wir überhaupt bauen.
+Reihenfolge = Dringlichkeit.
 
 ## Offen
-
-### F2 – Reines Theme oder auch `userChrome.css`?
-
-| Variante | Kann | Preis |
-| --- | --- | --- |
-| **A: Static Theme** (`manifest.json`) | Farben, Verläufe, Bilder; hell + dunkel | offiziell, update-fest, auf AMO veröffentlichbar |
-| **B: `userChrome.css`** | alles: Ecken, Abstände, Höhen, Icons, Elemente ausblenden | inoffiziell, kann mit jedem Firefox-Update brechen, manuelle Installation ins Profil, nicht über AMO verteilbar |
-| **C: beides** | Theme für Farben, CSS für Form und Dichte | zwei Dinge zu pflegen |
-
-Dazu kommen `about:config`-Einstellungen, die ohne Theme und ohne CSS wirken:
-`browser.uidensity = 1` (kompakt) und `browser.tabs.tabMinWidth` (Standard 76 px, Untergrenze 50 px).
-
-`theme_experiment` (Theme mit eigenem Stylesheet) scheidet aus: läuft nur in Nightly und Developer
-Edition.
-
-Nach deiner Antwort auf F1 (→ E2) deckt **A** nur die neutralen Farben ab. Eckige, lückenlose und
-schmalere Tabs gehen nur mit `userChrome.css`.
-
-Empfehlung: **C**. Das Theme bleibt für sich allein nutzbar und robust; das CSS ist ein kleiner,
-dokumentierter Zusatz für Form und Tab-Breite, den wir nach Firefox-Updates prüfen.
-
-Nachtrag 01.10.2026: In Firefox 157.0 gemessen, dass dafür rund zehn Variablen-Überschreibungen
-genügen, ohne Regeln auf einzelne Elemente. Das CSS bliebe also klein, und ein Skript kann nach
-Updates nachmessen, ob es noch wirkt. Was es kostet: einmal eine Pref setzen, eine Datei ins Profil
-legen, neu starten. → `docs/firefox-theming/userchrome.md`
-
-Stand 01.10.2026: Du probierst `userchrome/userChrome.css` aus (→ E3). Die Frage bleibt offen, bis
-du es gesehen hast.
-
-Antwort:
-
-### F13 – Weitergabe: wie installieren andere Theme und `userChrome.css`?
-
-Firefox kennt kein Paket, das beides enthält. Ein Theme darf nur Farben und Bilder enthalten, und
-eine Erweiterung kann weder eine `userChrome.css` ins Profil schreiben noch die nötige Pref setzen.
-Es bleiben zwei Teile mit zwei Installationswegen.
-
-| Variante | Installation für andere | Preis |
-| --- | --- | --- |
-| **A: Theme auf AMO, CSS per Skript** | Theme: ein Klick, Updates automatisch. CSS: ein Befehl (Skript) oder drei Handgriffe | zwei Schritte; Skript je Betriebssystem; AMO-Konto und Signatur (F6) |
-| **B: alles in der `userChrome.css`** | ein Befehl, keine Signatur | kein AMO; Farben hängen an Firefox-Interna; liegt auf einem fremden Theme |
-| **C: nur das Theme weitergeben** | ein Klick | Form und Abstände bleiben wie in Firefox |
-
-Empfehlung: **A**, so gebaut, dass jede Hälfte für sich funktioniert:
-
-- Das Theme setzt alle Farben und sieht auch ohne CSS ordentlich aus.
-- Das CSS setzt nur Form und Abstände und leitet Linien aus der Textfarbe ab (ist schon so), passt
-  also zu jedem Theme.
-- Das Skript legt unsere Datei als `chrome/fftheme/fftheme.css` ab und trägt nur eine
-  `@import`-Zeile in die `userChrome.css` ein, statt eine vorhandene zu überschreiben. Die Pref
-  schreibt es in die `user.js` des Profils. Deinstallation: Ordner und Zeile entfernen.
-- Einzelne Teile (Trennlinien, schmale Tabs, Radius) über eigene Prefs schaltbar machen
-  (`@media -moz-pref("fftheme.…")`, in 157 gemessen), damit niemand die Datei bearbeiten muss.
-- Releases auf GitHub: signierte `.xpi`, CSS-Paket, Skript. Die Messskripte laufen dort automatisch
-  gegen neue Firefox-Versionen.
-
-Vorbild: [firefox-gnome-theme](https://github.com/rafaelmardojai/firefox-gnome-theme) verteilt sein
-CSS genau so (Skript, `@import`-Zeile, `user.js`, Prefs für Optionen), allerdings nach Variante B.
-
-Braucht vorher: F6 (Signatur), F7 (Name, ID, Lizenz), F3 (hell und dunkel – wer weitergibt, braucht
-beides).
-
-Antwort:
 
 ### F12 – „Horizontale Breite“: was genau?
 
@@ -87,6 +24,9 @@ Ein Paket kann beide Varianten enthalten und dem System-Farbschema folgen. Welch
 überwiegend? Soll die andere gleichwertig sein oder erst später kommen?
 
 Empfehlung: beide von Anfang an, deine Hauptvariante zuerst ausarbeiten.
+
+Seit E5 hieße „hell“: ein zweiter Farbblock in der `userChrome.css`, der über „Firefox Hell“ liegt. Der
+Simulator erzeugt ihn schon; das Beispiel „neutral hell“ ist in Firefox 157.0 geprüft.
 
 Antwort:
 
@@ -115,26 +55,6 @@ Bestimmt, welche Zustände wir zuerst gut machen und testen.
 
 Antwort:
 
-### F6 – Nur für dich oder veröffentlichen?
-
-Release-Firefox installiert dauerhaft nur **signierte** Themes; ein temporär geladenes Theme ist
-nach dem Neustart weg. Für den Alltag brauchen wir also eine Signatur von addons.mozilla.org (AMO):
-
-- **Unlisted:** signiert, aber nicht auf AMO gelistet; Installation per `.xpi`. Braucht ein
-  AMO-Konto mit API-Schlüssel.
-- **Listed:** öffentlich auf AMO, mit Review, Beschreibung, Screenshots.
-
-Empfehlung: zunächst unlisted signieren, Veröffentlichung später entscheiden.
-
-Nachtrag 01.10.2026 – jetzt dringend: `theme/manifest.json` existiert, hält in deinem Firefox aber
-nur bis zum Neustart. Getestet: Die Arch-Version lehnt ein unsigniertes Theme auch mit
-`xpinstall.signatures.required = false` ab. Für „unlisted“ brauchst du ein Konto auf
-addons.mozilla.org und dort einen API-Schlüssel (JWT issuer + secret); dann signiert
-`npx web-ext sign --channel unlisted --api-key … --api-secret …` im Ordner `theme/` und liefert eine
-`.xpi` zum Installieren. Vorher F7 klären, weil die ID danach feststeht.
-
-Antwort:
-
 ### F7 – Name, ID, Lizenz
 
 - Name des Themes (Arbeitstitel `fftheme`)?
@@ -142,8 +62,8 @@ Antwort:
   als neues Add-on gilt.
 - Lizenz für das Repo? Empfehlung: MPL 2.0 (wie Firefox) oder MIT.
 
-Vorläufig steht im Manifest Name `fftheme`, ID `fftheme@bschoetz`, Version `0.1`. Solange nichts
-signiert ist, lässt sich das frei ändern.
+Seit E5 gibt es kein signiertes Theme mehr; eine Add-on-ID brauchen wir damit nicht. Offen bleiben
+Name und Lizenz.
 
 Antwort:
 
@@ -211,6 +131,24 @@ Trennlinie 18 px hoch. → `userchrome/userChrome.css`, Einzelheiten in `STAND.m
 ### E4 – Farben, erster Stand (01.10.2026)
 
 Im Simulator eingestellt, ausgehend vom Beispiel „neutral dunkel“: Leiste und Navigationsleiste
-`#1e1e1e`, aktiver Tab `#472200` mit Rand `#e66100`, Adressfeld `#000000`. → `theme/manifest.json`.
+`#1e1e1e`, aktiver Tab `#472200` mit Rand `#e66100`, Adressfeld `#000000`. Seit E5 im Farbblock der
+`userchrome/userChrome.css`.
 Berührt F3 (bisher nur dunkel) und F4 (Grau mit Orange als Akzent); beide bleiben offen, bis du den
 Stand im echten Browser gesehen hast.
+
+### E5 – Farben per `userChrome.css` über „Firefox Dunkel“ (ehemals F2, F6, F13; 01.10.2026)
+
+Alles steht in einer Datei, der `userChrome.css`: Form und Farben. Die Farben liegen als eigener
+Block über dem eingebauten Theme „Firefox Dunkel“ und gelten nur, solange es ausgewählt ist. Ein
+eigenes, signiertes Theme gibt es nicht mehr; für die Weitergabe ist damit nur das CSS zu
+installieren.
+
+Grund: Ein unsigniertes Theme hält in Release-Firefox nur bis zum Neustart, und jede Änderung an der
+`userChrome.css` braucht einen Neustart. Signieren hätte ein Konto auf addons.mozilla.org verlangt
+und zwei Installationswege für andere bedeutet.
+
+Bewusst in Kauf genommen: keine Veröffentlichung auf addons.mozilla.org; die Farben hängen an
+Firefox-internen Variablen; was der Block nicht überschreibt, bleibt „Firefox Dunkel“ (Menüs,
+Sidebar, Akzentfarbe und Fokusring in Nova-Lila).
+
+`theme/manifest.json` bleibt als geparkter Stand im Repo und wird nicht mehr gepflegt.

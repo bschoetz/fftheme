@@ -15,13 +15,14 @@ browser chrome takes as little space and attention as possible.
 - **Usable first:** the active tab, the focused address bar and hover states are obvious at a
   glance; text and icons meet WCAG contrast (4.5:1 text, 3:1 UI elements).
 - **Compact-mode native:** designed and tested with the compact density setting.
-- **Built on the official theming system:** a WebExtension static theme (`manifest.json`) for
-  Firefox 157+.
+- **One file to install:** everything lives in a `userChrome.css` for Firefox 157+ – shape and
+  spacing, plus colors layered on top of the built-in "Firefox Dark" theme. (A static theme can only
+  set colors, and an unsigned one does not survive a restart in release Firefox.)
 
 ## Status
 
-Work in progress. There is a first dark theme (`theme/`), a `userChrome.css` for tab shape
-(`userchrome/`) and a tab bar simulator to try variants; the theme is not signed yet – see
+Work in progress. There is a `userChrome.css` with tab shape and dark colors (`userchrome/`) and
+a tab bar simulator that generates it; there is no installer yet – see
 [`STAND.md`](STAND.md) for the current state and next steps and
 [`OFFENE_FRAGEN.md`](OFFENE_FRAGEN.md) for the open questions.
 
@@ -29,8 +30,8 @@ Work in progress. There is a first dark theme (`theme/`), a `userChrome.css` for
 
 | Path | Content |
 | --- | --- |
-| [`theme/`](theme/) | The static theme (`manifest.json`): colors |
-| [`userchrome/`](userchrome/) | `userChrome.css` for shape and spacing, plus `simulator.html`, a tab bar simulator that generates both files |
+| [`userchrome/`](userchrome/) | `userChrome.css` (shape, spacing and colors), plus `simulator.html`, a tab bar simulator that generates it |
+| [`theme/`](theme/) | Parked: a static theme with the same colors, no longer used |
 | [`docs/firefox-theming/`](docs/firefox-theming/) | Firefox theming documentation: German working notes plus unmodified upstream copies (MDN, Firefox source) |
 | [`STAND.md`](STAND.md) | Current state of knowledge and proposed next steps (German) |
 | [`OFFENE_FRAGEN.md`](OFFENE_FRAGEN.md) | Open design and project questions (German) |

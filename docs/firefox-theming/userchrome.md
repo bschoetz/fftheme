@@ -124,6 +124,41 @@ Styles und Layout, **kein Bild**: Ob Text, Favicon und Schließen-Knopf bei der 
 aussehen und ob der aktive Tab erkennbar bleibt, zeigt nur der echte Browser. Nicht gemessen:
 Menüs, Panels, Sidebar, vertikale Tabs, Dichte „normal“.
 
+## Farben
+
+Auch Farben lassen sich über Variablen setzen. Wir legen sie über das eingebaute Theme „Firefox
+Dunkel“ und binden den Block an dessen Kennung, damit er mit keinem anderen Theme kollidiert:
+
+```css
+:root[theme-effective-id="firefox-compact-dark@mozilla.org"] { … }
+```
+
+| Fläche | Variable |
+| --- | --- |
+| Tableiste / Fensterrahmen | `--toolbox-background-color`, `--toolbox-background-color-inactive` |
+| Verlauf im Rahmen | `--toolbox-background-image` (auf `none`) |
+| Text inaktiver Tabs | `--toolbox-text-color` |
+| Aktiver Tab | `--tab-background-color-selected`, `--tab-text-color-selected` |
+| Rand des aktiven Tabs | `--tab-border-color-selected-leading` und `-trailing` (beide gleich = einfarbig) |
+| Navigationsleiste | `--toolbar-background-color`, `--toolbar-text-color` |
+| Adressfeld | `--toolbar-field-background-color` (auch `-focus`), `--toolbar-field-text-color`, `--toolbar-field-border-color` |
+| Icons | `--toolbarbutton-icon-fill` |
+| Hover der Buttons | `--toolbarbutton-background-color-hover`, `-active` |
+| Schließen-Kreuz im Tab | `--tab-close-button-text-color` (auch `-hover`, `-active`) |
+| Plaketten im Adressfeld | `--urlbar-box-background-color` (auch `-hover`, `-active`) |
+
+Gemessen in 157.0: Mit diesen Variablen stimmen die berechneten Farben von Leiste, Tabs,
+Navigationsleiste, Adressfeld, Icons und Hover mit denen eines eigenen Themes gleicher Farben
+überein; „Firefox Hell“ bleibt vom dunklen Block unberührt, und ein entsprechender Block über
+„Firefox Hell“ funktioniert ebenso.
+
+Was bei dieser Lösung von „Firefox Dunkel“ bleibt: Menüs und Panels (`--panel-background-color`),
+Sidebar, Akzentfarbe und Fokusring (`--color-accent-primary`, `--focus-outline-color`, Nova-Lila)
+und die Trennlinie unter der Navigationsleiste. Zwischen Tableiste und Navigationsleiste zeichnen
+die eingebauten Themes keine Linie; ein eigenes Theme hätte dort 1 px.
+
+Nicht geprüft: inaktives Fenster, privates Fenster.
+
 ## Shadow DOM
 
 Teile der Oberfläche liegen in Shadow-Trees, z. B. die Scroll-Pfeile der Tableiste in
