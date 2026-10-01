@@ -1,0 +1,3 @@
+Abgerufen:       2026-10-01
+Firefox-Branch:  release
+Firefox-Version: 157.0.1

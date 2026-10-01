@@ -1,0 +1,6 @@
+# Upstream-Material ohne Lizenzdatei – wird von docs/firefox-theming/fetch-docs.sh lokal abgelegt
+docs/firefox-theming/upstream/unlicensed/
+
+# web-ext
+web-ext-artifacts/
+node_modules/
