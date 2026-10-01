@@ -119,6 +119,11 @@ Ergebnis: Für eckige, lückenlose, schmalere Tabs und eine eckige Adressleiste 
 Variablen-Überschreibungen. Regeln auf einzelne Elemente sind dafür nicht nötig. Per CSS geht die
 Mindestbreite auch unter die 50px, auf die Firefox die Pref begrenzt.
 
+Nebenwirkung von `--tab-margin-block: 0`: Die Tab-Vorschau beim Überfahren (`#tab-preview-panel`)
+hängt an der Unterkante des Tab-Elements. Firefox' sichtbarer Abstand von 4px entsteht nur durch den
+Rand um den Tab-Hintergrund; ohne ihn klebt die Vorschau am Tab. `margin-top` auf dem Panel
+verschiebt sie (gemessen: 2px ergeben 2px Abstand).
+
 Die Zahlen 40px und 2px sind Testwerte, keine Gestaltungsempfehlung. Gemessen sind berechnete
 Styles und Layout, **kein Bild**: Ob Text, Favicon und Schließen-Knopf bei der Breite noch gut
 aussehen und ob der aktive Tab erkennbar bleibt, zeigt nur der echte Browser. Nicht gemessen:

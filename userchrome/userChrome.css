@@ -25,6 +25,10 @@
   --urlbarview-border-radius: 8px !important;
 }
 
+#tab-preview-panel {
+  margin-top: 2px !important;
+}
+
 .tabbrowser-tab {
   --tab-label-mask-size: 1.5em !important;
 }
