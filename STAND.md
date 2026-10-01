@@ -126,6 +126,7 @@ Vollständig in `OFFENE_FRAGEN.md`. Für den Start nötig:
 | --- | --- |
 | **F6** – Theme signieren (AMO-Konto nötig)? | dauerhafte Nutzung des Themes |
 | **F2** – Theme allein oder plus `userChrome.css`? | Schritt 3 |
+| **F13** – Wie geben wir Theme und CSS weiter? | Installationsskript, Releases |
 | **F12** – Was heißt „horizontale Breite“ genau, was darf bei schmalen Tabs wegfallen? | Schritt 3 |
 | **F3** – hell, dunkel oder beides? | Schritt 2 |
 | **F4** – Farbrichtung: reines Grau, warm, kühl; mit oder ohne Akzent? | Schritt 2 |

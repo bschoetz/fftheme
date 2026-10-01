@@ -37,6 +37,39 @@ du es gesehen hast.
 
 Antwort:
 
+### F13 – Weitergabe: wie installieren andere Theme und `userChrome.css`?
+
+Firefox kennt kein Paket, das beides enthält. Ein Theme darf nur Farben und Bilder enthalten, und
+eine Erweiterung kann weder eine `userChrome.css` ins Profil schreiben noch die nötige Pref setzen.
+Es bleiben zwei Teile mit zwei Installationswegen.
+
+| Variante | Installation für andere | Preis |
+| --- | --- | --- |
+| **A: Theme auf AMO, CSS per Skript** | Theme: ein Klick, Updates automatisch. CSS: ein Befehl (Skript) oder drei Handgriffe | zwei Schritte; Skript je Betriebssystem; AMO-Konto und Signatur (F6) |
+| **B: alles in der `userChrome.css`** | ein Befehl, keine Signatur | kein AMO; Farben hängen an Firefox-Interna; liegt auf einem fremden Theme |
+| **C: nur das Theme weitergeben** | ein Klick | Form und Abstände bleiben wie in Firefox |
+
+Empfehlung: **A**, so gebaut, dass jede Hälfte für sich funktioniert:
+
+- Das Theme setzt alle Farben und sieht auch ohne CSS ordentlich aus.
+- Das CSS setzt nur Form und Abstände und leitet Linien aus der Textfarbe ab (ist schon so), passt
+  also zu jedem Theme.
+- Das Skript legt unsere Datei als `chrome/fftheme/fftheme.css` ab und trägt nur eine
+  `@import`-Zeile in die `userChrome.css` ein, statt eine vorhandene zu überschreiben. Die Pref
+  schreibt es in die `user.js` des Profils. Deinstallation: Ordner und Zeile entfernen.
+- Einzelne Teile (Trennlinien, schmale Tabs, Radius) über eigene Prefs schaltbar machen
+  (`@media -moz-pref("fftheme.…")`, in 157 gemessen), damit niemand die Datei bearbeiten muss.
+- Releases auf GitHub: signierte `.xpi`, CSS-Paket, Skript. Die Messskripte laufen dort automatisch
+  gegen neue Firefox-Versionen.
+
+Vorbild: [firefox-gnome-theme](https://github.com/rafaelmardojai/firefox-gnome-theme) verteilt sein
+CSS genau so (Skript, `@import`-Zeile, `user.js`, Prefs für Optionen), allerdings nach Variante B.
+
+Braucht vorher: F6 (Signatur), F7 (Name, ID, Lizenz), F3 (hell und dunkel – wer weitergibt, braucht
+beides).
+
+Antwort:
+
 ### F12 – „Horizontale Breite“: was genau?
 
 Ich habe es so verstanden: Die **einzelnen Tabs** sollen schmal sein, damit viele nebeneinander
