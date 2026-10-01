@@ -136,6 +136,9 @@ Im Simulator eingestellt, ausgehend vom Beispiel „neutral dunkel“: Leiste un
 Berührt F3 (bisher nur dunkel) und F4 (Grau mit Orange als Akzent); beide bleiben offen, bis du den
 Stand im echten Browser gesehen hast.
 
+Nachtrag 01.10.2026: Das Orange ist wieder raus. Der aktive Tab ist grau, die Oberfläche damit rein
+grau ohne Akzentfarbe.
+
 ### E5 – Farben per `userChrome.css` über „Firefox Dunkel“ (ehemals F2, F6, F13; 01.10.2026)
 
 Alles steht in einer Datei, der `userChrome.css`: Form und Farben. Die Farben liegen als eigener

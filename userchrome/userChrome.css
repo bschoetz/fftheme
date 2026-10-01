@@ -60,10 +60,10 @@
   --toolbox-background-color-inactive: #1e1e1e !important;
   --toolbox-background-image: none !important;
   --toolbox-text-color: #d4d4d4 !important;
-  --tab-background-color-selected: #391b00 !important;
+  --tab-background-color-selected: #555555 !important;
   --tab-text-color-selected: #ffffff !important;
-  --tab-border-color-selected-leading: #391b00 !important;
-  --tab-border-color-selected-trailing: #391b00 !important;
+  --tab-border-color-selected-leading: #555555 !important;
+  --tab-border-color-selected-trailing: #555555 !important;
   --toolbar-background-color: #1e1e1e !important;
   --toolbar-text-color: #e6e6e6 !important;
   --toolbar-field-background-color: #000000 !important;
@@ -85,6 +85,6 @@
 
 /* Aktiver Tab beim Überfahren: Füllung und Rand etwas heller */
 :root[theme-effective-id="firefox-compact-dark@mozilla.org"] .tabbrowser-tab[selected]:hover {
-  --tab-background-color-selected: #582900 !important;
-  --tab-border-color-accent: linear-gradient(96deg, #582900 20.68%, #582900 79.34%) !important;
+  --tab-background-color-selected: #646464 !important;
+  --tab-border-color-accent: linear-gradient(96deg, #646464 20.68%, #646464 79.34%) !important;
 }
