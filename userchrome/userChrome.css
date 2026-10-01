@@ -62,8 +62,8 @@
   --toolbox-text-color: #d4d4d4 !important;
   --tab-background-color-selected: #391b00 !important;
   --tab-text-color-selected: #ffffff !important;
-  --tab-border-color-selected-leading: #c64600 !important;
-  --tab-border-color-selected-trailing: #c64600 !important;
+  --tab-border-color-selected-leading: #391b00 !important;
+  --tab-border-color-selected-trailing: #391b00 !important;
   --toolbar-background-color: #1e1e1e !important;
   --toolbar-text-color: #e6e6e6 !important;
   --toolbar-field-background-color: #000000 !important;

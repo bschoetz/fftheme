@@ -81,12 +81,14 @@ Form:
 Farben (eigener Block am Ende der Datei, gilt nur mit „Firefox Dunkel“):
 
 - Leiste und Navigationsleiste `#1e1e1e`, kein Verlauf.
-- Aktiver Tab `#391b00` mit Rand `#c64600`, Text `#ffffff`; inaktive Tabs Text `#d4d4d4`.
+- Aktiver Tab `#391b00`, Text `#ffffff`; inaktive Tabs Text `#d4d4d4`. **Testweise ohne sichtbaren
+  Rand:** Randfarbe gleich Hintergrund (`#391b00`); vorher `#c64600`.
 - Adressfeld `#000000`, Rahmen `#5a5a5a`, Text `#e6e6e6`.
 - Fokusring neutral `#d4d4d4`, Kontrast 11,2 – nur noch für den Tastaturfokus an Buttons. Orange
   markiert nur den aktiven Tab.
 - Icons, Schließen-Kreuz, Hover und Plaketten im Adressfeld neutral statt lila getönt.
-- Kontraste: Text 11,2 und 15,8; Rand des aktiven Tabs 3,4; Trennlinie 3,8. Der Rahmen des
+- Kontraste: Text 11,2 und 15,8; Trennlinie 3,8. Im Test ohne Rand hebt sich der aktive Tab nur mit
+  1,1 von der Leiste ab (mit Rand `#c64600`: 3,4). Der Rahmen des
   Adressfelds liegt mit 2,4 unter dem Mindestwert von 3 – von dir so gewählt (01.10.2026).
 
 Nicht überschrieben und damit weiter „Firefox Dunkel“: Menüs und Panels, Sidebar, Neuer-Tab-Seite
