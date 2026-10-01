@@ -82,7 +82,8 @@ Farben (eigener Block am Ende der Datei, gilt nur mit „Firefox Dunkel“):
 - Leiste und Navigationsleiste `#1e1e1e`, kein Verlauf.
 - Aktiver Tab `#472200` mit Rand `#e66100`, Text `#ffffff`; inaktive Tabs Text `#d4d4d4`.
 - Adressfeld `#000000`, Rahmen `#7a7a7a`, Text `#e6e6e6`.
-- Fokusring `#e66100` (Adressfeld beim Tippen, Buttons bei Tastaturbedienung), Kontrast 4,8.
+- Fokusring neutral `#d4d4d4` (Adressfeld beim Tippen, Buttons bei Tastaturbedienung), Kontrast 11,2.
+  Orange markiert damit nur den aktiven Tab.
 - Icons, Schließen-Kreuz, Hover und Plaketten im Adressfeld neutral statt lila getönt.
 - Alle Kontraste über den Mindestwerten (Text 11,2 und 14,0; Rand 4,8; Trennlinie 3,8; Rahmen 3,9).
 
