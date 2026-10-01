@@ -21,13 +21,15 @@ browser chrome takes as little space and attention as possible.
 ## Status
 
 Early setup. The theming documentation is collected, the design decisions are still open – see
-[`OFFENE_FRAGEN.md`](OFFENE_FRAGEN.md).
+[`STAND.md`](STAND.md) for the current state and next steps and
+[`OFFENE_FRAGEN.md`](OFFENE_FRAGEN.md) for the open questions.
 
 ## Repository layout
 
 | Path | Content |
 | --- | --- |
 | [`docs/firefox-theming/`](docs/firefox-theming/) | Firefox theming documentation: German working notes plus unmodified upstream copies (MDN, Firefox source) |
+| [`STAND.md`](STAND.md) | Current state of knowledge and proposed next steps (German) |
 | [`OFFENE_FRAGEN.md`](OFFENE_FRAGEN.md) | Open design and project questions (German) |
 | [`CLAUDE.md`](CLAUDE.md) | Working agreements for AI-assisted development (German) |
 

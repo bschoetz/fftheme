@@ -6,7 +6,8 @@ Minimalistisches, gut benutzbares Firefox-Theme für das Nova-Design (Firefox 15
 den Kompaktmodus. Das Theme entsteht gemeinsam mit dem Nutzer: Gestaltungsentscheidungen trifft er,
 nicht Claude.
 
-Stand: Setup-Phase. Es gibt noch kein Theme, nur Doku und offene Fragen.
+Aktueller Wissensstand und nächste Schritte: [`STAND.md`](STAND.md). Zu Beginn jeder Sitzung lesen
+und am Ende aktualisieren.
 
 ## Arbeitsregeln
 
