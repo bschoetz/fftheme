@@ -32,6 +32,9 @@ genügen, ohne Regeln auf einzelne Elemente. Das CSS bliebe also klein, und ein 
 Updates nachmessen, ob es noch wirkt. Was es kostet: einmal eine Pref setzen, eine Datei ins Profil
 legen, neu starten. → `docs/firefox-theming/userchrome.md`
 
+Stand 01.10.2026: Du probierst `userchrome/userChrome.css` aus (→ E3). Die Frage bleibt offen, bis
+du es gesehen hast.
+
 Antwort:
 
 ### F12 – „Horizontale Breite“: was genau?
@@ -152,3 +155,9 @@ Experimente. Bis zum ersten fertigen Theme geht alles auf `main`. → steht in `
 - **Runde Ecken:** das Gegenteil von platzökonomisch.
 
 → Leitlinien im README ergänzt. Folgefragen: F2 (Ansatz), F12 (Breite genau).
+
+### E3 – Tab-Form zum Ausprobieren (01.10.2026)
+
+Tabs mit nur leichter Eckenrundung (statt ganz eckig, wie in E2 notiert) und erkennbarer Trennung
+zwischen inaktiven Tabs. Umgesetzt in `userchrome/userChrome.css`: Radius 4 px, Trennlinie in 50 %
+der Textfarbe. Beide Werte sind mein Vorschlag und stehen oben in der Datei als Stellschrauben.

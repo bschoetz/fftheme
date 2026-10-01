@@ -1,7 +1,7 @@
 # Stand und nächste Schritte
 
-Stand: 01.10.2026, nach der Recherche zu `userChrome.css`. Es gibt noch kein Theme – nur Doku,
-Ziele, Messungen und offene Fragen. Diese Datei ist der Einstiegspunkt, um weiterzumachen.
+Stand: 01.10.2026. Es gibt eine erste `userChrome.css` zum Ausprobieren, aber noch kein Theme –
+sonst Doku, Ziele, Messungen und offene Fragen. Diese Datei ist der Einstiegspunkt, um weiterzumachen.
 
 ## Was wir wollen
 
@@ -10,7 +10,8 @@ Aus deinen Aussagen (→ `OFFENE_FRAGEN.md`, E2):
 - **Neutral:** Der Browser ist ein neutrales Fenster, in dem die Inhalte wirken. Keine Farbstiche,
   keine Verläufe.
 - **Viele Tabs:** gut lesbar und kompakt. Vor allem horizontal darf nichts unnötig breit sein.
-- **Keine runden Ecken:** Sie verschwenden Platz.
+- **Nur leichte Eckenrundung** an den Tabs (E3; zuerst hieß es „keine runden Ecken“).
+- **Erkennbare Trennung zwischen inaktiven Tabs** (E3).
 - **Kompaktmodus** als Grundlage.
 
 ## Was wir wissen
@@ -44,6 +45,24 @@ Belegt durch Mozillas Doku und den Firefox-157-Quellcode, Details in `docs/firef
    sichtbaren Tabs (16 → 32 bei 1400 px Fensterbreite). Sechs Radius-Tokens machen auch Adressleiste
    und Buttons eckig. Jede Deklaration braucht `!important`. Details und Mechanik:
    `docs/firefox-theming/userchrome.md`.
+
+## Was es gibt
+
+`userchrome/userChrome.css` – zum Ausprobieren, noch nicht von dir beurteilt:
+
+- Tab-Radius 4 px statt 24 px (`--tab-border-radius`).
+- 1 px breite, 16 px hohe Trennlinie zwischen inaktiven Tabs in 50 % der Textfarbe; keine Linie am
+  aktiven und am überfahrenen Tab. Kontrast zum Grund: 4,2 : 1 mit Firefox' dunklem Theme,
+  3,4 : 1 mit dem hellen (aus Headless-Screenshots gemessen).
+- Sonst nichts: Breite, Höhe und Lücken der Tabs sind unverändert.
+
+Die Datei ist per Symlink in dein Profil eingehängt (`<Profil>/chrome/userChrome.css`). Sie wirkt
+erst, wenn `toolkit.legacyUserProfileCustomizations.stylesheets` in `about:config` auf `true` steht
+und Firefox neu gestartet wurde. Abschalten: Pref zurück auf `false` und neu starten.
+
+Geprüft nur headless (Screenshots mit hellem und dunklem Firefox-Theme, 12 und 40 Tabs). Nicht
+geprüft: dein echtes Fenster unter Sway, angeheftete Tabs, Tab-Gruppen, Tabs beim Ziehen,
+vertikale Tabs (die Regeln greifen dort absichtlich nicht).
 
 ## Was wir noch nicht wissen
 
@@ -93,8 +112,9 @@ Später: F5 (Nutzung), F6 (Signierung), F7 (Name, ID, Lizenz), F8 (Mindestversio
    Bilder, deckende Flächen, klar abgesetzter aktiver Tab. Kontraste nachrechnen, temporär laden,
    mit der Checkliste aus `nova-aenderungen.md` durchgehen. Braucht F3 und F4 – notfalls beginne
    ich mit reinem Grau in beiden Varianten als Diskussionsgrundlage.
-3. **`userChrome.css`-Prototyp** (`userchrome/userChrome.css`): Eckenradius 0, Lücken zwischen Tabs
-   entfernen, Innenabstand und Mindestbreite senken – nach `userchrome.md` allein über Variablen.
+3. **`userChrome.css` weiterführen** (`userchrome/userChrome.css`, erste Fassung liegt vor): nach
+   deinem Eindruck Radius und Trennlinie justieren, dann Lücken zwischen Tabs entfernen,
+   Innenabstand und Mindestbreite senken – nach `userchrome.md` allein über Variablen.
    Werte nach dem Schreiben mit `userchrome-test/variablen.py` nachmessen. Voraussetzung: `toolkit.legacyUserProfileCustomizations.stylesheets = true` und ein
    `chrome/`-Ordner im Profil. Braucht F2 und F12.
 4. **Gemeinsam iterieren:** Du schaust es dir im Alltag mit vielen Tabs an, wir justieren Farben,
@@ -109,6 +129,7 @@ Später: F5 (Nutzung), F6 (Signierung), F7 (Name, ID, Lizenz), F8 (Mindestversio
 | `README.md` | Projektziel (englisch) |
 | `CLAUDE.md` | Arbeitsregeln: Commit + Push auf `main` nach jeder bedeutsamen Änderung |
 | `OFFENE_FRAGEN.md` | Offene und entschiedene Fragen |
+| `userchrome/userChrome.css` | Tab-Radius und Trennlinien, zum Ausprobieren |
 | `docs/firefox-theming/README.md` | Index der Doku, Quellen, Lizenzen |
 | `docs/firefox-theming/theme-keys.md` | Alle Theme-Keys mit Nova-Status |
 | `docs/firefox-theming/nova-aenderungen.md` | Nova-Änderungen, Test-Checkliste |

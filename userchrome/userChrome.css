@@ -1,0 +1,34 @@
+/* fftheme – userChrome.css zum Ausprobieren (Firefox 157, Nova, horizontale Tabs)
+ *
+ * 1. Tabs mit nur leichter Eckenrundung
+ * 2. Trennlinie zwischen inaktiven Tabs
+ *
+ * Braucht toolkit.legacyUserProfileCustomizations.stylesheets = true und einen
+ * Neustart. Hintergründe: docs/firefox-theming/userchrome.md
+ */
+
+:root {
+  /* Stellschrauben */
+  --fftheme-tab-radius: 4px;
+  --fftheme-tab-separator-height: 16px;
+  /* 50 % der Textfarbe: mit Firefox' hellem und dunklem Theme über 3 : 1 */
+  --fftheme-tab-separator-color: color-mix(in srgb, currentColor 50%, transparent);
+
+  /* Firefox-Wert: 24px. Der Schließen-Knopf folgt mit Radius − 3px. */
+  --tab-border-radius: var(--fftheme-tab-radius) !important;
+}
+
+/* Trennlinie am linken Rand jedes Tabs, in der Lücke zum Nachbarn */
+#tabbrowser-tabs[orient="horizontal"] .tabbrowser-tab {
+  background-image: linear-gradient(var(--fftheme-tab-separator-color), var(--fftheme-tab-separator-color)) !important;
+  background-size: 1px var(--fftheme-tab-separator-height) !important;
+  background-position: left center !important;
+  background-repeat: no-repeat !important;
+}
+
+/* Keine Linie, wo der Tab-Hintergrund schon trennt: am aktiven und am
+   überfahrenen Tab, jeweils auch am rechten Nachbarn, und ganz links. */
+#tabbrowser-tabs[orient="horizontal"] .tabbrowser-tab:is([selected], [multiselected], :hover, :first-child),
+#tabbrowser-tabs[orient="horizontal"] .tabbrowser-tab:is([selected], [multiselected], :hover) + .tabbrowser-tab {
+  background-image: none !important;
+}
