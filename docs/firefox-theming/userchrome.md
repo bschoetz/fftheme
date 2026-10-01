@@ -122,7 +122,12 @@ Mindestbreite auch unter die 50px, auf die Firefox die Pref begrenzt.
 Nebenwirkung von `--tab-margin-block: 0`: Die Tab-Vorschau beim Überfahren (`#tab-preview-panel`)
 hängt an der Unterkante des Tab-Elements. Firefox' sichtbarer Abstand von 4px entsteht nur durch den
 Rand um den Tab-Hintergrund; ohne ihn klebt die Vorschau am Tab. `margin-top` auf dem Panel
-verschiebt sie (gemessen: 2px ergeben 2px Abstand).
+verschiebt sie. Achtung: Panels haben ab Werk `margin: calc(-1 * var(--panel-box-shadow-margin))`,
+weil ihr Fenster einen unsichtbaren Schattenrand von 4px mitbringt. Wer `margin-top` einfach auf
+1px setzt, löscht diesen Ausgleich und bekommt 5px Abstand. Richtig ist
+`margin-top: calc(1px - var(--panel-box-shadow-margin))`. Headless fällt der Fehler nicht auf, weil
+der Schattenrand dort 0 ist; zum Testen `panel { --panel-box-shadow-margin: 4px !important; }`
+dazuladen.
 
 Die Zahlen 40px und 2px sind Testwerte, keine Gestaltungsempfehlung. Gemessen sind berechnete
 Styles und Layout, **kein Bild**: Ob Text, Favicon und Schließen-Knopf bei der Breite noch gut

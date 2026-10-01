@@ -701,7 +701,8 @@ function exportCss(st = S) {
   if (has("maxWidth")) tabs.push(`--tab-max-width: ${v("maxWidth")}px${imp}`);
 
   if (has("chromeRadius")) rules.push(`.urlbar,\n#searchbar {\n  --urlbar-border-radius: ${v("chromeRadius")}px${imp}\n  --urlbarview-border-radius: ${v("chromeRadius")}px${imp}\n}`);
-  if (has("previewGap")) rules.push(`#tab-preview-panel {\n  margin-top: ${v("previewGap")}px${imp}\n}`);
+  // Panels haben ab Werk einen negativen Rand in Höhe ihres Schattenrands; der muss erhalten bleiben.
+  if (has("previewGap")) rules.push(`#tab-preview-panel {\n  margin-top: calc(${v("previewGap")}px - var(--panel-box-shadow-margin))${imp}\n}`);
   if (has("maskSize")) rules.push(`.tabbrowser-tab {\n  --tab-label-mask-size: ${v("maskSize")}em${imp}\n}`);
   if (has("fontSize")) rules.push(`.tab-label {\n  font-size: ${v("fontSize")}px${imp}\n}`);
   if (has("selWeight")) rules.push(`.tabbrowser-tab[selected] .tab-label {\n  font-weight: ${v("selWeight")}${imp}\n}`);
