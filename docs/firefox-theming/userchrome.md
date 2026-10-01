@@ -158,6 +158,15 @@ Dunkel“ und binden den Block an dessen Kennung, damit er mit keinem anderen Th
 | Plaketten im Adressfeld | `--urlbar-box-background-color` (auch `-hover`, `-active`) |
 | Fokusring (Rahmen des fokussierten Adressfelds, Tastaturfokus) | `--focus-outline-color` |
 
+Die Stärke des Fokusrings steuern `--focus-outline-width` (Tastaturfokus, ab Werk 2px) und
+`--urlbar-input-container-border-width-open` (fokussiertes Adressfeld, ab Werk das Doppelte des
+normalen Rahmens). Aus dem zweiten Wert leitet Firefox auch den Innenabstand des Adressfelds ab
+(`--urlbar-input-container-padding`); wer ihn ändert, muss den Innenabstand festhalten, sonst
+verschiebt sich der Inhalt des Felds um 1px (gemessen).
+
+| | |
+| --- | --- |
+
 Gemessen in 157.0: Mit diesen Variablen stimmen die berechneten Farben von Leiste, Tabs,
 Navigationsleiste, Adressfeld, Icons und Hover mit denen eines eigenen Themes gleicher Farben
 überein; „Firefox Hell“ bleibt vom dunklen Block unberührt, und ein entsprechender Block über

@@ -13,6 +13,9 @@
   --tab-content-button-size: 22px !important;
   --tab-background-color-hover: color-mix(in srgb, currentColor 20%, transparent) !important;
   --toolbarbutton-border-radius: 8px !important;
+  --focus-outline-width: 1px !important;
+  --urlbar-input-container-border-width-open: calc(1 * var(--urlbar-input-container-border-width)) !important;
+  --urlbar-input-container-padding: round(nearest, var(--space-xxsmall) + 2 * var(--urlbar-input-container-border-width), 1px) !important;
 }
 
 #tabbrowser-tabs {

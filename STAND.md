@@ -71,6 +71,7 @@ Form:
 - Schrift der Tab-Titel 15 px, Schließen-Knopf 22 px, Text blendet über 1,5 em aus.
 - 1 px breite, 18 px hohe Trennlinie zwischen inaktiven Tabs in 50 % der Textfarbe; keine Linie am
   aktiven und am überfahrenen Tab.
+- Fokusring 1 px statt 2 px: Rahmen des fokussierten Adressfelds und Tastaturfokus an Buttons.
 - Tab-Vorschau beim Überfahren 3 px unter dem Tab (`#tab-preview-panel`); ohne das klebt sie am Tab,
   weil der Abstand über und unter den Tabs fehlt.
 - Zeilenhöhe 1,3. Du hattest 1 eingestellt; damit schneidet Firefox Unterlängen ab (g, p, y). 1,3
