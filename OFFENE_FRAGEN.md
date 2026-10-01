@@ -159,5 +159,8 @@ Experimente. Bis zum ersten fertigen Theme geht alles auf `main`. → steht in `
 ### E3 – Tab-Form zum Ausprobieren (01.10.2026)
 
 Tabs mit nur leichter Eckenrundung (statt ganz eckig, wie in E2 notiert) und erkennbarer Trennung
-zwischen inaktiven Tabs. Umgesetzt in `userchrome/userChrome.css`: Radius 4 px, Trennlinie in 50 %
-der Textfarbe. Beide Werte sind mein Vorschlag und stehen oben in der Datei als Stellschrauben.
+zwischen inaktiven Tabs. Erste Fassung von Claude: Radius 4 px, Trennlinie in 50 % der Textfarbe.
+
+Zwischenstand von dir, im Simulator eingestellt (01.10.2026): Radius 8 px auch für Adressfeld und
+Buttons, kein Abstand über und unter den Tabs, Lücke 2 px, Mindestbreite 68 px, Schrift 15 px,
+Trennlinie 18 px hoch. → `userchrome/userChrome.css`, Einzelheiten in `STAND.md`.

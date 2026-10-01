@@ -48,13 +48,18 @@ Belegt durch Mozillas Doku und den Firefox-157-Quellcode, Details in `docs/firef
 
 ## Was es gibt
 
-`userchrome/userChrome.css` – zum Ausprobieren, noch nicht von dir beurteilt:
+`userchrome/userChrome.css` – dein Zwischenstand vom 01.10.2026, im Simulator eingestellt:
 
-- Tab-Radius 4 px statt 24 px (`--tab-border-radius`).
-- 1 px breite, 16 px hohe Trennlinie zwischen inaktiven Tabs in 50 % der Textfarbe; keine Linie am
-  aktiven und am überfahrenen Tab. Kontrast zum Grund: 4,2 : 1 mit Firefox' dunklem Theme,
-  3,4 : 1 mit dem hellen (aus Headless-Screenshots gemessen).
-- Sonst nichts: Breite, Höhe und Lücken der Tabs sind unverändert.
+- Radius 8 px für Tabs, Adressfeld und Buttons (Firefox: 24 px).
+- Tableiste 28 px hoch statt 36 px: kein Abstand über und unter den Tabs.
+- Lücke zwischen Tabs 2 px statt 4 px, Mindestbreite 68 px statt 76 px.
+- Schrift der Tab-Titel 15 px, Schließen-Knopf 22 px, Text blendet über 1,5 em aus.
+- 1 px breite, 18 px hohe Trennlinie zwischen inaktiven Tabs in 50 % der Textfarbe; keine Linie am
+  aktiven und am überfahrenen Tab.
+- Zeilenhöhe 1,3. Du hattest 1 eingestellt; damit schneidet Firefox Unterlängen ab (g, p, y). 1,3
+  ändert sonst nichts, weil die Tab-Höhe von `--tab-min-height` kommt.
+
+Im Simulator ist das die Variante „Aktuelle userChrome.css“.
 
 Die Datei ist per Symlink in dein Profil eingehängt (`<Profil>/chrome/userChrome.css`). Sie wirkt
 erst, wenn `toolkit.legacyUserProfileCustomizations.stylesheets` in `about:config` auf `true` steht
@@ -68,8 +73,8 @@ und die Theme-Farben zum Kopieren und merkt sich benannte Varianten. Tab-Maße s
 mit allen Reglern verändert, je 6, 12 und 40 Tabs). Nicht gegen Firefox geprüft: die Farben eigener
 Themes, Hover, Dichte „normal“.
 
-Die `userChrome.css` selbst ist nur headless geprüft (Screenshots mit hellem und dunklem
-Firefox-Theme, 12 und 40 Tabs). Nicht
+Die `userChrome.css` selbst ist nur headless geprüft (Screenshots mit dunklem Firefox-Theme, 12
+und 40 Tabs). Nicht
 geprüft: dein echtes Fenster unter Sway, angeheftete Tabs, Tab-Gruppen, Tabs beim Ziehen,
 vertikale Tabs (die Regeln greifen dort absichtlich nicht).
 
