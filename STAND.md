@@ -73,6 +73,8 @@ Form:
   aktiven und am überfahrenen Tab.
 - Das Adressfeld ändert seinen Rahmen beim Fokus nicht (gleiche Farbe, gleiche Breite). Der
   Tastaturfokus an Buttons ist 1 px statt 2 px stark.
+- Schließen-Kreuz der Tabs bekommt beim Überfahren einen roten Hintergrund (30 % `#e5484d`, gedrückt
+  45 %); Rotton und Stärke sind Claudes Wahl.
 - Tab-Vorschau beim Überfahren 3 px unter dem Tab (`#tab-preview-panel`); ohne das klebt sie am Tab,
   weil der Abstand über und unter den Tabs fehlt.
 - Zeilenhöhe 1,3. Du hattest 1 eingestellt; damit schneidet Firefox Unterlängen ab (g, p, y). 1,3

@@ -217,7 +217,8 @@ aside h2 small { font-weight: 400; color: var(--ui-muted); font-size: 11px; marg
   border-radius: calc(var(--tab-border-radius) - 3px);
 }
 .fx .tab-close-button svg { width: 100%; height: 100%; }
-.fx .tab-close-button:hover { background-color: var(--tab-background-color-hover); }
+.fx .tab-close-button:hover { background-color: var(--tab-close-button-background-color-hover); }
+.fx .tab-close-button:hover:active { background-color: var(--tab-close-button-background-color-active); }
 .fx .tabbrowser-tab[pinned] .tab-close-button,
 .fx .tabbrowser-tabs[closebuttons="activetab"] .tabbrowser-tab:not([selected]) .tab-close-button,
 .fx[data-close="active"] .tabbrowser-tab:not([selected]) .tab-close-button,
@@ -405,6 +406,8 @@ const STYLE = [
     options: [["fx", "wie Firefox"], ["active", "nur auf dem aktiven Tab"], ["never", "nie"]],
     hint: "Firefox zeigt ihn auf inaktiven Tabs nur, solange Tabs breiter als 140 px sind und die Leiste nicht überläuft." },
   { k: "closeSize", label: "Größe des Schließen-Knopfs", code: "--tab-content-button-size", min: 12, max: 24, step: 1, def: 20, fmt: px },
+  { k: "closeRed", label: "Schließen-Knopf beim Überfahren rot", code: "--tab-close-button-background-color-hover", min: 0, max: 60, step: 5, def: 0, fmt: pct,
+    hint: "Anteil Rot im Hintergrund des Knopfs, gedrückt 15 Punkte mehr. 0 % lässt Firefox' grauen Hover." },
 
   { g: "Trennung inaktiver Tabs", tag: "userChrome.css" },
   { k: "sepOn", label: "Trennlinie zwischen Tabs", code: "eigene Regel", check: true, def: false },
@@ -454,7 +457,7 @@ const BUILTIN_VARIANTS = {
   "Firefox-Standard": {},
   // Entspricht userchrome/userChrome.css im Repo
   "Aktueller Stand": { radius: 8, marginBlock: 0, gap: 3, minWidth: 68, fontSize: 15, lineHeight: 1.3, iconEndMargin: 5,
-    maskSize: 1.5, closeSize: 22, sepOn: true, sepHeight: 18, hoverBg: 12, selHover: 6, chromeRadius: 8, focusWidth: 1, urlFocus: false, previewGap: 3, preset: "neutral-dark",
+    maskSize: 1.5, closeSize: 22, closeRed: 30, sepOn: true, sepHeight: 18, hoverBg: 12, selHover: 6, chromeRadius: 8, focusWidth: 1, urlFocus: false, previewGap: 3, preset: "neutral-dark",
     colors: { tab_selected: "#3c3c3c", tab_line: "#3c3c3c", toolbar: "#1e1e1e", toolbar_field: "#000000", toolbar_field_border: "#5a5a5a", focus: "#d4d4d4" } },
 };
 
@@ -553,6 +556,7 @@ function renderTabs(el) {
 }
 
 const mix = p => `color-mix(in srgb, currentColor ${p}%, transparent)`;
+const red = p => `color-mix(in srgb, #e5484d ${p}%, transparent)`;
 const NOVA_GRADIENT = "linear-gradient(96deg, #b89cff 20.68%, #ff9565 79.34%)";
 const solid = c => `linear-gradient(96deg, ${c} 20.68%, ${c} 79.34%)`;
 
@@ -588,6 +592,8 @@ function applyStyle(el, st) {
   set("--tab-label-line-height", v("lineHeight"));
   set("--tab-label-mask-size", v("maskSize") + "em");
   set("--tab-content-button-size", v("closeSize") + "px");
+  set("--tab-close-button-background-color-hover", v("closeRed") ? red(v("closeRed")) : "var(--tab-background-color-hover)");
+  set("--tab-close-button-background-color-active", v("closeRed") ? red(v("closeRed") + 15) : "var(--tab-background-color-hover)");
   set("--tab-content-button-padding", "4px");
   set("--tab-border-width", v("borderWidth") + "px");
   "fontSize" in st ? set("--tab-font-size", st.fontSize + "px") : el.style.removeProperty("--tab-font-size");
@@ -723,6 +729,8 @@ function exportCss(st = S) {
   if (has("iconEndMargin")) root.push(`--tab-icon-end-margin: ${v("iconEndMargin")}px${imp}`);
   if (has("lineHeight")) root.push(`--tab-label-line-height: ${v("lineHeight")}${imp}`);
   if (has("closeSize")) root.push(`--tab-content-button-size: ${v("closeSize")}px${imp}`);
+  if (v("closeRed")) root.push(`--tab-close-button-background-color-hover: ${red(v("closeRed"))}${imp}`,
+    `--tab-close-button-background-color-active: ${red(v("closeRed") + 15)}${imp}`);
   if (has("borderWidth")) root.push(`--tab-border: ${v("borderWidth")}px solid var(--tab-border-color)${imp}`, `--tab-outline-offset: -${v("borderWidth")}px${imp}`);
   if (has("inactiveBg")) root.push(`--tab-background-color: ${v("inactiveBg") ? mix(v("inactiveBg")) : "transparent"}${imp}`);
   if (has("inactiveBorder")) {
