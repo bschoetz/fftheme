@@ -81,12 +81,13 @@ Farben (eigener Block am Ende der Datei, gilt nur mit „Firefox Dunkel“):
 
 - Leiste und Navigationsleiste `#1e1e1e`, kein Verlauf.
 - Aktiver Tab `#391b00` mit Rand `#c64600`, Text `#ffffff`; inaktive Tabs Text `#d4d4d4`.
-- Adressfeld `#000000`, Rahmen `#7a7a7a`, Text `#e6e6e6`.
+- Adressfeld `#000000`, Rahmen `#5a5a5a`, Text `#e6e6e6`.
 - Fokusring neutral `#d4d4d4` (Adressfeld beim Tippen, Buttons bei Tastaturbedienung), Kontrast 11,2.
   Orange markiert damit nur den aktiven Tab.
 - Icons, Schließen-Kreuz, Hover und Plaketten im Adressfeld neutral statt lila getönt.
-- Alle Kontraste über den Mindestwerten (Text 11,2 und 15,8; Rand des aktiven Tabs 3,4; Trennlinie
-  3,8; Rahmen des Adressfelds 3,9).
+- Kontraste: Text 11,2 und 15,8; Rand des aktiven Tabs 3,4; Trennlinie 3,8. Der Rahmen des
+  Adressfelds liegt mit 2,4 unter dem Mindestwert von 3 – von dir so gewählt (01.10.2026); mit Fokus
+  wird er hell (11,2).
 
 Nicht überschrieben und damit weiter „Firefox Dunkel“: Menüs und Panels, Sidebar, Neuer-Tab-Seite
 und die Akzentfarbe (Nova-Lila, z. B. Checkboxen, Schalter, Ladeanzeige).
