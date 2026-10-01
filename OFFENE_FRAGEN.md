@@ -3,29 +3,9 @@
 Hier sammelt Claude Fragen, die nur du entscheiden kannst. Antworte einfach unter der jeweiligen
 Frage (oder im Chat) – entschiedene Fragen wandern nach unten in „Entschieden“.
 
-Reihenfolge = Dringlichkeit. F1 und F2 bestimmen, was wir überhaupt bauen.
+Reihenfolge = Dringlichkeit. F2 und F12 bestimmen, was wir überhaupt bauen.
 
 ## Offen
-
-### F1 – Was genau stört dich am neuen Design?
-
-Ein Theme kann **nur Farben, Hintergrundbilder und Verläufe** ändern. Welche Punkte treffen zu?
-
-- [ ] Farben allgemein (zu bunt, zu blass, zu wenig Kontrast …)
-- [ ] das Lila als Akzentfarbe
-- [ ] die Farbverläufe im Fensterrahmen
-- [ ] aktiver Tab hebt sich schlecht ab
-- [ ] runde Ecken / „Pillen“-Formen von Tabs, Adressleiste, Buttons
-- [ ] Abstände und Größen (auch im Kompaktmodus noch zu viel Luft)
-- [ ] Icons
-- [ ] die neue Sidebar
-- [ ] Neuer-Tab-Seite
-- [ ] anderes: …
-
-Die ersten vier löst ein normales Theme. Ecken, Abstände, Icons und Layout gehen damit **nicht** –
-siehe F2. Ein, zwei Screenshots mit Markierungen würden hier viel helfen.
-
-Antwort:
 
 ### F2 – Reines Theme oder auch `userChrome.css`?
 
@@ -33,13 +13,30 @@ Antwort:
 | --- | --- | --- |
 | **A: Static Theme** (`manifest.json`) | Farben, Verläufe, Bilder; hell + dunkel | offiziell, update-fest, auf AMO veröffentlichbar |
 | **B: `userChrome.css`** | alles: Ecken, Abstände, Höhen, Icons, Elemente ausblenden | inoffiziell, kann mit jedem Firefox-Update brechen, manuelle Installation ins Profil, nicht über AMO verteilbar |
-| **C: beides** | Theme für Farben, optionales CSS für Form und Dichte | zwei Dinge zu pflegen |
+| **C: beides** | Theme für Farben, CSS für Form und Dichte | zwei Dinge zu pflegen |
 
-`theme_experiment` (Theme mit eigenem Stylesheet) scheidet praktisch aus: läuft nur in Nightly und
-Developer Edition.
+Dazu kommen `about:config`-Einstellungen, die ohne Theme und ohne CSS wirken:
+`browser.uidensity = 1` (kompakt) und `browser.tabs.tabMinWidth` (Standard 76 px, Untergrenze 50 px).
 
-Empfehlung: mit **A** anfangen. Wenn F1 ergibt, dass dich vor allem Formen und Abstände stören,
-auf **C** erweitern – das Theme bleibt dann trotzdem für sich nutzbar.
+`theme_experiment` (Theme mit eigenem Stylesheet) scheidet aus: läuft nur in Nightly und Developer
+Edition.
+
+Nach deiner Antwort auf F1 (→ E2) deckt **A** nur die neutralen Farben ab. Eckige, lückenlose und
+schmalere Tabs gehen nur mit `userChrome.css`.
+
+Empfehlung: **C**. Das Theme bleibt für sich allein nutzbar und robust; das CSS ist ein kleiner,
+dokumentierter Zusatz für Form und Tab-Breite, den wir nach Firefox-Updates prüfen.
+
+Antwort:
+
+### F12 – „Horizontale Breite“: was genau?
+
+Ich habe es so verstanden: Die **einzelnen Tabs** sollen schmal sein, damit viele nebeneinander
+passen, bevor die Tableiste scrollt. Richtig? Oder ging es (auch) darum, dass keine Sidebar bzw.
+vertikale Tableiste dem Seiteninhalt Breite wegnimmt?
+
+Daran anschließend: Was darf bei schmalen Tabs wegfallen – der Schließen-Knopf auf inaktiven Tabs
+(Schließen per Mittelklick / Strg+W), die Lücken zwischen Tabs, der Innenabstand?
 
 Antwort:
 
@@ -141,3 +138,12 @@ Antwort:
 
 Nach jeder bedeutsamen Änderung committen und pushen. Direkt auf `main`; Branches nur für
 Experimente. Bis zum ersten fertigen Theme geht alles auf `main`. → steht in `CLAUDE.md`.
+
+### E2 – Was am neuen Design stört (ehemals F1, 01.10.2026)
+
+- **Farben:** Ein Browser soll ein neutrales Fenster sein, in dem die Inhalte wirken.
+- **Tabs:** Sehr viele Tabs offen; sie sollen gut lesbar und kompakt sein. Vor allem die
+  horizontale Breite zählt – nichts darf unnötig breit sein.
+- **Runde Ecken:** das Gegenteil von platzökonomisch.
+
+→ Leitlinien im README ergänzt. Folgefragen: F2 (Ansatz), F12 (Breite genau).

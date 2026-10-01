@@ -28,6 +28,23 @@ Die Dichte landet als Attribut auf dem Wurzelelement: `:root[uidensity="compact"
 | `--tab-min-height` (Nova) | 32px | 28px | 41px |
 | `--tab-min-height` (vor Nova) | 36px | 29px | 41px |
 
+## Tab-Breite (horizontale Tabs)
+
+Quellen: `browser/app/profile/firefox.js`, `browser/components/tabbrowser/content/tabs.js`,
+`browser/themes/shared/tabbrowser/tabs.css` (157.0.1).
+
+| Größe | Wert | Einstellbar über |
+| --- | --- | --- |
+| Mindestbreite eines Tabs | 76px | Pref `browser.tabs.tabMinWidth`; Firefox begrenzt den Wert nach unten auf **50** |
+| Maximalbreite eines Tabs | 225px (`--tab-max-width`) | nur `userChrome.css` |
+| Innenabstand links/rechts (kompakt) | 6px (`--tab-inline-padding`) | nur `userChrome.css` |
+| Eckenradius des Tabs | `--tab-border-radius` | nur `userChrome.css` |
+| Schließen-Knopf auf inaktiven Tabs | verschwindet, sobald die Tableiste überläuft; Schwelle sonst `browser.tabs.tabClipWidth` = 140 | Pref |
+| Zuschlag bei Ton-/Notiz-Icon | +20 bis +44px Mindestbreite | nur `userChrome.css` |
+
+Sind alle Tabs auf Mindestbreite geschrumpft, beginnt die Tableiste zu scrollen. Eine kleinere
+Mindestbreite heißt also: mehr Tabs gleichzeitig sichtbar.
+
 ## Bedeutung für das Projekt
 
 - Mit einem reinen Static Theme können wir die Dichte nicht beeinflussen. Wir testen in „Kompakt“

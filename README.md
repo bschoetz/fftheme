@@ -8,7 +8,10 @@ browser chrome takes as little space and attention as possible.
 
 ## Goals
 
-- **Minimalist:** flat, calm surfaces; no gradients or decoration without a function.
+- **Neutral:** the browser is a neutral window in which the content can shine – no tinted chrome,
+  no gradients, no decoration without a function.
+- **Made for many tabs:** tabs stay legible and take as little horizontal space as possible; no
+  rounded corners or gaps that waste room.
 - **Usable first:** the active tab, the focused address bar and hover states are obvious at a
   glance; text and icons meet WCAG contrast (4.5:1 text, 3:1 UI elements).
 - **Compact-mode native:** designed and tested with the compact density setting.
