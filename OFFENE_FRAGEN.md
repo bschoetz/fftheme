@@ -27,6 +27,11 @@ schmalere Tabs gehen nur mit `userChrome.css`.
 Empfehlung: **C**. Das Theme bleibt für sich allein nutzbar und robust; das CSS ist ein kleiner,
 dokumentierter Zusatz für Form und Tab-Breite, den wir nach Firefox-Updates prüfen.
 
+Nachtrag 01.10.2026: In Firefox 157.0 gemessen, dass dafür rund zehn Variablen-Überschreibungen
+genügen, ohne Regeln auf einzelne Elemente. Das CSS bliebe also klein, und ein Skript kann nach
+Updates nachmessen, ob es noch wirkt. Was es kostet: einmal eine Pref setzen, eine Datei ins Profil
+legen, neu starten. → `docs/firefox-theming/userchrome.md`
+
 Antwort:
 
 ### F12 – „Horizontale Breite“: was genau?

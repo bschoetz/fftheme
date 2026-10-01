@@ -28,6 +28,8 @@ Neu laden mit [`./fetch-docs.sh`](fetch-docs.sh).
 | [`theme-keys.md`](theme-keys.md) | Arbeitsreferenz: alle `colors`/`images`/`properties`-Keys mit Wirkung, Nova-Status und CSS-Variable |
 | [`nova-aenderungen.md`](nova-aenderungen.md) | Was sich mit Nova für Theme-Autoren ändert, inkl. Test-Checkliste |
 | [`kompaktmodus.md`](kompaktmodus.md) | Dichte-Einstellung, Prefs und Maße laut Firefox-Quellcode |
+| [`userchrome.md`](userchrome.md) | Wie `userChrome.css` geladen wird und kaskadiert, welche Variablen Tabs und Ecken steuern, Messwerte aus Firefox 157.0 |
+| [`userchrome-test/`](userchrome-test/) | Skripte, die Firefox headless mit Wegwerf-Profil starten und die Wirkung von `userChrome.css` messen |
 
 Die Zusammenfassungen sind sinngemäß, nicht wörtlich. Im Zweifel gilt die Upstream-Quelle.
 

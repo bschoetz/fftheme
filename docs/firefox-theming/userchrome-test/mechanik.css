@@ -1,0 +1,28 @@
+/* Sonden für mechanik.py. Jede Regel setzt eine Marker-Variable (--p-*) oder
+   konkurriert gezielt mit einer Firefox-eigenen Regel. Kein Theme. */
+@import "extra.css";
+
+:root { --p-loaded: yes; }
+:root[uidensity="compact"] { --p-compact: yes; }
+
+/* Normale Deklaration gegen Firefox-eigene Regel */
+.tab-background { border-radius: 0; }
+:root { --tab-inline-padding: 1px; }
+
+/* !important gegen Firefox-eigene Regel */
+.tab-background { margin-block: 1px !important; }
+:root { --tab-overflow-clip-margin: 0px !important; }
+
+/* !important gegen Inline-Style (tabs.js setzt --tab-min-width-pref) */
+#tabbrowser-tabs { --tab-min-width-pref: 30px !important; }
+
+/* Shadow DOM: #scrollbutton-up liegt im Shadow-Tree von #tabbrowser-arrowscrollbox */
+#scrollbutton-up { --p-shadow-plain: yes; }
+#tabbrowser-arrowscrollbox #scrollbutton-up { --p-shadow-cross: yes; }
+#tabbrowser-arrowscrollbox::part(scrollbutton-up) { --p-shadow-part: yes; }
+
+/* Pref-Abfragen */
+@media -moz-pref("browser.nova.enabled") { :root { --p-pref-nova: yes; } }
+@media -moz-pref("fftheme.probe") { :root { --p-pref-custom: yes; } }
+@media -moz-pref("fftheme.missing") { :root { --p-pref-missing: yes; } }
+@supports -moz-bool-pref("fftheme.probe") { :root { --p-boolpref-old: yes; } }

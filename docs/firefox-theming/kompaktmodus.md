@@ -37,8 +37,9 @@ Quellen: `browser/app/profile/firefox.js`, `browser/components/tabbrowser/conten
 | --- | --- | --- |
 | Mindestbreite eines Tabs | 76px | Pref `browser.tabs.tabMinWidth`; Firefox begrenzt den Wert nach unten auf **50** |
 | Maximalbreite eines Tabs | 225px (`--tab-max-width`) | nur `userChrome.css` |
-| Innenabstand links/rechts (kompakt) | 6px (`--tab-inline-padding`) | nur `userChrome.css` |
-| Eckenradius des Tabs | `--tab-border-radius` | nur `userChrome.css` |
+| Innenabstand links/rechts | 6px kompakt, 8px normal (`--tab-inline-padding`) | nur `userChrome.css` |
+| Eckenradius des Tabs | 24px (`--tab-border-radius`) | nur `userChrome.css` |
+| Lücke zwischen zwei Tabs | 4px (2 × `--tab-overflow-clip-margin`) | nur `userChrome.css` |
 | Schließen-Knopf auf inaktiven Tabs | verschwindet, sobald die Tableiste überläuft; Schwelle sonst `browser.tabs.tabClipWidth` = 140 | Pref |
 | Zuschlag bei Ton-/Notiz-Icon | +20 bis +44px Mindestbreite | nur `userChrome.css` |
 
@@ -52,3 +53,4 @@ Mindestbreite heißt also: mehr Tabs gleichzeitig sichtbar.
 - Mehr Platzersparnis als der eingebaute Kompaktmodus ginge nur über `userChrome.css`
   (`toolkit.legacyUserProfileCustomizations.stylesheets = true`), z. B. mit Regeln unter
   `:root[uidensity="compact"]`. Das ist inoffiziell und kann mit jedem Firefox-Update brechen.
+  Mechanik und Messwerte: [`userchrome.md`](userchrome.md).

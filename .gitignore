@@ -4,3 +4,6 @@ docs/firefox-theming/upstream/unlicensed/
 # web-ext
 web-ext-artifacts/
 node_modules/
+
+# Python
+__pycache__/

@@ -30,7 +30,7 @@ Nova-Blogpost. Ausführliche Beschreibungen mit Beispielen: `upstream/mdn/manife
 
 Spalte „Nova“: ✓ = laut Mozilla unverändert (von uns noch nicht im Browser nachgeprüft), sonst
 Hinweis. CSS-Variable = worauf Firefox den Key intern
-abbildet (hilfreich im Browser-Werkzeugkasten).
+abbildet (hilfreich in den Browser-Werkzeugen).
 
 ### Rahmen und Tableiste
 

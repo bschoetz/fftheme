@@ -1,7 +1,7 @@
 # Stand und nächste Schritte
 
-Stand: 01.10.2026, nach der ersten Sitzung. Es gibt noch kein Theme – nur Doku, Ziele und offene
-Fragen. Diese Datei ist der Einstiegspunkt, um weiterzumachen.
+Stand: 01.10.2026, nach der Recherche zu `userChrome.css`. Es gibt noch kein Theme – nur Doku,
+Ziele, Messungen und offene Fragen. Diese Datei ist der Einstiegspunkt, um weiterzumachen.
 
 ## Was wir wollen
 
@@ -38,13 +38,20 @@ Belegt durch Mozillas Doku und den Firefox-157-Quellcode, Details in `docs/firef
    Edition – für uns keine Option.
 8. **Signatur:** Release-Firefox installiert dauerhaft nur von AMO signierte Themes. Zum Entwickeln
    reicht temporäres Laden über `about:debugging`.
+9. **`userChrome.css` funktioniert in 157 und braucht nur Variablen.** Gemessen in Firefox 157.0
+   (headless, Wegwerf-Profil): Vier Tab-Variablen plus Mindestbreite machen die Tabs eckig und
+   lückenlos, senken die Tableiste von 36 auf 28 px und verdoppeln bei 40 px Mindestbreite die
+   sichtbaren Tabs (16 → 32 bei 1400 px Fensterbreite). Sechs Radius-Tokens machen auch Adressleiste
+   und Buttons eckig. Jede Deklaration braucht `!important`. Details und Mechanik:
+   `docs/firefox-theming/userchrome.md`.
 
 ## Was wir noch nicht wissen
 
-- **Nichts ist im Browser getestet.** Alle Angaben stammen aus Doku und Quellcode.
-- Welche `userChrome.css`-Regeln in 157 tatsächlich greifen. Die Variablen `--tab-border-radius`,
-  `--tab-inline-padding`, `--tab-max-width` und `--tab-min-height` existieren im Quellcode; ob ein
-  Überschreiben reicht oder weitere Regeln nötig sind, muss der Browser-Werkzeugkasten zeigen.
+- **Niemand hat es bisher angesehen.** Die Theme-Angaben stammen aus Doku und Quellcode. Die
+  `userChrome.css`-Werte sind gemessen (berechnete Styles und Layout), aber nicht als Bild geprüft:
+  Ob schmale, eckige Tabs lesbar bleiben und der aktive Tab erkennbar ist, zeigt nur der echte
+  Browser.
+- Wie sich die Variablen auf Menüs, Panels, Sidebar und vertikale Tabs auswirken – nicht gemessen.
 - Wie Firefox unter Sway die System-Akzentfarbe bestimmt und ob sie zu einem neutralen Theme passt.
 - Ob die Angabe „✓ unverändert“ in `theme-keys.md` für jeden Key stimmt – sie beruht auf Mozillas
   Aussage, die MDN-Referenz war zum Abrufzeitpunkt noch nicht auf Nova aktualisiert.
@@ -87,8 +94,8 @@ Später: F5 (Nutzung), F6 (Signierung), F7 (Name, ID, Lizenz), F8 (Mindestversio
    mit der Checkliste aus `nova-aenderungen.md` durchgehen. Braucht F3 und F4 – notfalls beginne
    ich mit reinem Grau in beiden Varianten als Diskussionsgrundlage.
 3. **`userChrome.css`-Prototyp** (`userchrome/userChrome.css`): Eckenradius 0, Lücken zwischen Tabs
-   entfernen, Innenabstand und Mindestbreite senken. Selektoren zuerst im Browser-Werkzeugkasten
-   prüfen. Voraussetzung: `toolkit.legacyUserProfileCustomizations.stylesheets = true` und ein
+   entfernen, Innenabstand und Mindestbreite senken – nach `userchrome.md` allein über Variablen.
+   Werte nach dem Schreiben mit `userchrome-test/variablen.py` nachmessen. Voraussetzung: `toolkit.legacyUserProfileCustomizations.stylesheets = true` und ein
    `chrome/`-Ordner im Profil. Braucht F2 und F12.
 4. **Gemeinsam iterieren:** Du schaust es dir im Alltag mit vielen Tabs an, wir justieren Farben,
    Breiten und Lesbarkeit.
@@ -106,6 +113,8 @@ Später: F5 (Nutzung), F6 (Signierung), F7 (Name, ID, Lizenz), F8 (Mindestversio
 | `docs/firefox-theming/theme-keys.md` | Alle Theme-Keys mit Nova-Status |
 | `docs/firefox-theming/nova-aenderungen.md` | Nova-Änderungen, Test-Checkliste |
 | `docs/firefox-theming/kompaktmodus.md` | Dichte, Tab-Breite, Prefs |
+| `docs/firefox-theming/userchrome.md` | Wie `userChrome.css` funktioniert, Variablen, Messwerte |
+| `docs/firefox-theming/userchrome-test/` | Skripte, die Firefox headless starten und nachmessen |
 | `docs/firefox-theming/upstream/` | Unveränderte Kopien von MDN und Firefox-Quellcode |
 
 Hinweis: Claude am besten in `~/Github/fftheme/fftheme/` starten, nicht im Ordner darüber – sonst
