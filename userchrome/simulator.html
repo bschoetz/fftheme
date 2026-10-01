@@ -250,7 +250,7 @@ aside h2 small { font-weight: 400; color: var(--ui-muted); font-size: 11px; marg
   background: var(--toolbar-field-background-color); color: var(--toolbar-field-text-color);
   border: 1px solid var(--toolbar-field-border-color); border-radius: var(--chrome-radius);
 }
-.fx .urlbar:focus { outline: none; border: var(--focus-width) solid var(--focus-outline-color); padding: 0 calc(13px - var(--focus-width)); }
+.fx .urlbar:focus { outline: none; border: var(--focus-width) solid var(--toolbar-field-border-color-focus); padding: 0 calc(13px - var(--focus-width)); }
 .fx .page { height: 120px; background: Canvas; color: GrayText; display: grid; place-items: center; font: 13px system-ui, sans-serif; }
 .fx.strip-only :is(.nav-bar, .page, .tab-preview) { display: none; }
 
@@ -418,6 +418,8 @@ const STYLE = [
   { k: "chromeRadius", label: "Eckenradius Adressfeld und Buttons", code: "--toolbarbutton-border-radius …", min: 0, max: 24, step: 1, def: 24, fmt: px },
   { k: "focusWidth", label: "Stärke des Fokusrings", code: "--focus-outline-width …", min: 1, max: 3, step: 1, def: 2, fmt: px,
     hint: "Rahmen des Adressfelds beim Tippen und Tastaturfokus an Buttons. Ein Klick ins Adressfeld zeigt ihn." },
+  { k: "urlFocus", label: "Adressfeld beim Fokus hervorheben", code: "--toolbar-field-border-color-focus", check: true, def: true,
+    hint: "Aus: Der Rahmen des Adressfelds bleibt beim Tippen, wie er ist. Der Tastaturfokus an Buttons behält den Fokusring." },
   { k: "previewGap", label: "Abstand der Tab-Vorschau", code: "#tab-preview-panel", min: 0, max: 8, step: 1, def: 0, fmt: px,
     hint: "Die Vorschau beim Überfahren hängt an der Unterkante des Tabs. Ohne Abstand oben und unten am Tab klebt sie direkt daran." },
 ];
@@ -446,7 +448,7 @@ const BUILTIN_VARIANTS = {
   "Firefox-Standard": {},
   // Entspricht userchrome/userChrome.css im Repo
   "Aktueller Stand": { radius: 8, marginBlock: 0, gap: 3, minWidth: 68, fontSize: 15, lineHeight: 1.3, iconEndMargin: 5,
-    maskSize: 1.5, closeSize: 22, sepOn: true, sepHeight: 18, hoverBg: 20, chromeRadius: 8, focusWidth: 1, previewGap: 3, preset: "neutral-dark",
+    maskSize: 1.5, closeSize: 22, sepOn: true, sepHeight: 18, hoverBg: 20, chromeRadius: 8, focusWidth: 1, urlFocus: false, previewGap: 3, preset: "neutral-dark",
     colors: { tab_selected: "#391b00", tab_line: "#c64600", toolbar: "#1e1e1e", toolbar_field: "#000000", toolbar_field_border: "#5a5a5a", focus: "#d4d4d4" } },
 };
 
@@ -599,6 +601,7 @@ function applyStyle(el, st) {
   set("--toolbar-field-text-color", c.toolbar_field_text);
   set("--toolbar-field-border-color", c.toolbar_field_border);
   set("--focus-outline-color", c.focus || (t.preset.base === "dark" ? "#b89cff" : "#764edd"));
+  set("--toolbar-field-border-color-focus", v("urlFocus") ? "var(--focus-outline-color)" : "var(--toolbar-field-border-color)");
 }
 
 // Was in Firefox JavaScript erledigt: Überlauf, Schließen-Knöpfe, Text-Überlauf
@@ -707,6 +710,7 @@ function exportCss(st = S) {
   }
   if (has("hoverBg")) root.push(`--tab-background-color-hover: ${mix(v("hoverBg"))}${imp}`);
   if (has("chromeRadius")) root.push(`--toolbarbutton-border-radius: ${v("chromeRadius")}px${imp}`);
+  if (!v("urlFocus")) root.push(`--toolbar-field-border-color-focus: var(--toolbar-field-border-color)${imp}`);
   if (has("focusWidth")) root.push(`--focus-outline-width: ${v("focusWidth")}px${imp}`,
     `--urlbar-input-container-border-width-open: calc(${v("focusWidth")} * var(--urlbar-input-container-border-width))${imp}`,
     // Firefox leitet den Innenabstand des Adressfelds aus der Rahmenbreite ab; so bleibt er wie ab Werk.

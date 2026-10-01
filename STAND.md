@@ -71,7 +71,8 @@ Form:
 - Schrift der Tab-Titel 15 px, Schließen-Knopf 22 px, Text blendet über 1,5 em aus.
 - 1 px breite, 18 px hohe Trennlinie zwischen inaktiven Tabs in 50 % der Textfarbe; keine Linie am
   aktiven und am überfahrenen Tab.
-- Fokusring 1 px statt 2 px: Rahmen des fokussierten Adressfelds und Tastaturfokus an Buttons.
+- Das Adressfeld ändert seinen Rahmen beim Fokus nicht (gleiche Farbe, gleiche Breite). Der
+  Tastaturfokus an Buttons ist 1 px statt 2 px stark.
 - Tab-Vorschau beim Überfahren 3 px unter dem Tab (`#tab-preview-panel`); ohne das klebt sie am Tab,
   weil der Abstand über und unter den Tabs fehlt.
 - Zeilenhöhe 1,3. Du hattest 1 eingestellt; damit schneidet Firefox Unterlängen ab (g, p, y). 1,3
@@ -82,12 +83,11 @@ Farben (eigener Block am Ende der Datei, gilt nur mit „Firefox Dunkel“):
 - Leiste und Navigationsleiste `#1e1e1e`, kein Verlauf.
 - Aktiver Tab `#391b00` mit Rand `#c64600`, Text `#ffffff`; inaktive Tabs Text `#d4d4d4`.
 - Adressfeld `#000000`, Rahmen `#5a5a5a`, Text `#e6e6e6`.
-- Fokusring neutral `#d4d4d4` (Adressfeld beim Tippen, Buttons bei Tastaturbedienung), Kontrast 11,2.
-  Orange markiert damit nur den aktiven Tab.
+- Fokusring neutral `#d4d4d4`, Kontrast 11,2 – nur noch für den Tastaturfokus an Buttons. Orange
+  markiert nur den aktiven Tab.
 - Icons, Schließen-Kreuz, Hover und Plaketten im Adressfeld neutral statt lila getönt.
 - Kontraste: Text 11,2 und 15,8; Rand des aktiven Tabs 3,4; Trennlinie 3,8. Der Rahmen des
-  Adressfelds liegt mit 2,4 unter dem Mindestwert von 3 – von dir so gewählt (01.10.2026); mit Fokus
-  wird er hell (11,2).
+  Adressfelds liegt mit 2,4 unter dem Mindestwert von 3 – von dir so gewählt (01.10.2026).
 
 Nicht überschrieben und damit weiter „Firefox Dunkel“: Menüs und Panels, Sidebar, Neuer-Tab-Seite
 und die Akzentfarbe (Nova-Lila, z. B. Checkboxen, Schalter, Ladeanzeige).
