@@ -156,6 +156,7 @@ Dunkel“ und binden den Block an dessen Kennung, damit er mit keinem anderen Th
 | Hover der Buttons | `--toolbarbutton-background-color-hover`, `-active` |
 | Schließen-Kreuz im Tab | `--tab-close-button-text-color` (auch `-hover`, `-active`) |
 | Plaketten im Adressfeld | `--urlbar-box-background-color` (auch `-hover`, `-active`) |
+| Fokusring (Rahmen des fokussierten Adressfelds, Tastaturfokus) | `--focus-outline-color` |
 
 Gemessen in 157.0: Mit diesen Variablen stimmen die berechneten Farben von Leiste, Tabs,
 Navigationsleiste, Adressfeld, Icons und Hover mit denen eines eigenen Themes gleicher Farben
@@ -163,7 +164,7 @@ Navigationsleiste, Adressfeld, Icons und Hover mit denen eines eigenen Themes gl
 „Firefox Hell“ funktioniert ebenso.
 
 Was bei dieser Lösung von „Firefox Dunkel“ bleibt: Menüs und Panels (`--panel-background-color`),
-Sidebar, Akzentfarbe und Fokusring (`--color-accent-primary`, `--focus-outline-color`, Nova-Lila)
+Sidebar, Akzentfarbe (`--color-accent-primary`, Nova-Lila)
 und die Trennlinie unter der Navigationsleiste. Zwischen Tableiste und Navigationsleiste zeichnen
 die eingebauten Themes keine Linie; ein eigenes Theme hätte dort 1 px.
 

@@ -81,11 +81,12 @@ Farben (eigener Block am Ende der Datei, gilt nur mit „Firefox Dunkel“):
 - Leiste und Navigationsleiste `#1e1e1e`, kein Verlauf.
 - Aktiver Tab `#472200` mit Rand `#e66100`, Text `#ffffff`; inaktive Tabs Text `#d4d4d4`.
 - Adressfeld `#000000`, Rahmen `#7a7a7a`, Text `#e6e6e6`.
+- Fokusring `#e66100` (Adressfeld beim Tippen, Buttons bei Tastaturbedienung), Kontrast 4,8.
 - Icons, Schließen-Kreuz, Hover und Plaketten im Adressfeld neutral statt lila getönt.
 - Alle Kontraste über den Mindestwerten (Text 11,2 und 14,0; Rand 4,8; Trennlinie 3,8; Rahmen 3,9).
 
-Nicht überschrieben und damit weiter „Firefox Dunkel“: Menüs und Panels, Sidebar, Neuer-Tab-Seite,
-Akzentfarbe und Fokusring (Nova-Lila, z. B. der Ring ums Adressfeld beim Tippen).
+Nicht überschrieben und damit weiter „Firefox Dunkel“: Menüs und Panels, Sidebar, Neuer-Tab-Seite
+und die Akzentfarbe (Nova-Lila, z. B. Checkboxen, Schalter, Ladeanzeige).
 
 Im Simulator ist das die Variante „Aktueller Stand“; sie erzeugt exakt diese Datei.
 
@@ -127,7 +128,7 @@ Vollständig in `OFFENE_FRAGEN.md`.
 | --- | --- |
 | **F7** – Name und Lizenz | Weitergabe |
 | **F3** – auch eine helle Variante (Block über „Firefox Hell“)? | Weitergabe an Leute mit hellem Firefox |
-| Akzentfarbe und Fokusring: Nova-Lila lassen oder auf dein Orange setzen? | nichts, Optik |
+| Akzentfarbe (Checkboxen, Schalter): Nova-Lila lassen oder auf dein Orange setzen? | nichts, Optik |
 
 Später: F4 (Farbrichtung, vorläufig E4), F5 (Nutzung), F12 (was bei schmalen Tabs wegfallen darf),
 F8–F11.
@@ -137,7 +138,7 @@ F8–F11.
 1. **Du: Firefox neu starten und ansehen.** Voraussetzung: Theme „Dunkel“ ausgewählt. Im Alltag mit
    vielen Tabs ansehen, auch Menüs, Sidebar, inaktives und privates Fenster. Was stört, im Simulator
    ändern oder mir sagen.
-2. **Restbereiche entscheiden:** Menüs, Sidebar, Neuer-Tab-Seite, Akzentfarbe/Fokusring. Was davon
+2. **Restbereiche entscheiden:** Menüs, Sidebar, Neuer-Tab-Seite, Akzentfarbe. Was davon
    neutral oder orange werden soll, kommt als weitere Variablen in den Farbblock; vorher messen.
 3. **Weitergabe vorbereiten:** CSS nach `chrome/fftheme/fftheme.css` mit `@import`-Zeile umbauen,
    Installationsskript für Linux (legt die Datei ab, setzt die Pref in `user.js`), Anleitung ins

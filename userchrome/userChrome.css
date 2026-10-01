@@ -66,6 +66,7 @@
   --toolbar-field-background-color-focus: #000000 !important;
   --toolbar-field-text-color: #e6e6e6 !important;
   --toolbar-field-border-color: #7a7a7a !important;
+  --focus-outline-color: #e66100 !important;
   /* Neutral statt lila getönt: Icons, Schließen-Kreuz, Hover, Plaketten im Adressfeld */
   --toolbarbutton-icon-fill: currentColor !important;
   --toolbarbutton-background-color-hover: color-mix(in srgb, currentColor 17%, transparent) !important;

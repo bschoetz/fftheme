@@ -250,6 +250,7 @@ aside h2 small { font-weight: 400; color: var(--ui-muted); font-size: 11px; marg
   background: var(--toolbar-field-background-color); color: var(--toolbar-field-text-color);
   border: 1px solid var(--toolbar-field-border-color); border-radius: var(--chrome-radius);
 }
+.fx .urlbar:focus { outline: none; border: 2px solid var(--focus-outline-color); padding: 0 11px; }
 .fx .page { height: 120px; background: Canvas; color: GrayText; display: grid; place-items: center; font: 13px system-ui, sans-serif; }
 .fx.strip-only :is(.nav-bar, .page, .tab-preview) { display: none; }
 
@@ -296,6 +297,7 @@ aside h2 small { font-weight: 400; color: var(--ui-muted); font-size: 11px; marg
     <li>Die Tab-Regeln und Variablennamen sind aus Firefox 157.0 übernommen; Maße und Farben der eingebauten Themes sind dort gemessen.</li>
     <li>Schrift und Schriftgröße kommen vom System (<code>font: message-box</code>). In Firefox geöffnet entspricht das der Schrift der echten Tableiste.</li>
     <li>Navigationsleiste, Adressfeld und Buttons sind nur angedeutet. Angeheftete Tabs sind angenähert.</li>
+    <li>Ein Klick ins Adressfeld zeigt den Fokusring.</li>
     <li>Die Tab-Vorschau beim Überfahren ist vereinfacht (ohne Vorschaubild) und erscheint ohne Verzögerung.</li>
     <li>Nicht simuliert: Tab-Gruppen, Ton-Symbole, Container-Linien, Ziehen, Animationen, vertikale Tabs.</li>
     <li>Die Favicons sind Platzhalter. Firefox blendet das Symbol aus, wenn eine Seite keins hat.</li>
@@ -320,26 +322,26 @@ const PRESETS = {
   "fx-dark": {
     label: "Firefox Dunkel (eingebaut)", builtin: true, base: "dark",
     colors: { frame: "#252428", tab_background_text: "#f2f0f8", tab_selected: "#171519", tab_text: "#f2f0f8", tab_line: null,
-              toolbar: "#1e1d20", toolbar_text: "#fcfbff", toolbar_field: "#18171a", toolbar_field_text: "#e7e1f8", toolbar_field_border: "#3f3e42" },
+              toolbar: "#1e1d20", toolbar_text: "#fcfbff", toolbar_field: "#18171a", toolbar_field_text: "#e7e1f8", toolbar_field_border: "#3f3e42", focus: null },
     exact: { frameImage: "linear-gradient(96deg, oklab(0.350395 0.0333667 -0.0714453 / 0.5) 39.84%, oklab(0.363806 0.0999189 0.068457 / 0.5) 101.72%)",
              toolbar: "rgba(0, 0, 0, 0.2)", toolbar_field: "rgba(0, 0, 0, 0.2)", hover: "rgba(182, 170, 217, 0.25)" },
   },
   "fx-light": {
     label: "Firefox Hell (eingebaut)", builtin: true, base: "light",
     colors: { frame: "#ffffff", tab_background_text: "#180e30", tab_selected: "#ffffff", tab_text: "#180e30", tab_line: null,
-              toolbar: "#ffffff", toolbar_text: "#15141a", toolbar_field: "#ffffff", toolbar_field_text: "#3e315f", toolbar_field_border: "#d6d5da" },
+              toolbar: "#ffffff", toolbar_text: "#15141a", toolbar_field: "#ffffff", toolbar_field_text: "#3e315f", toolbar_field_border: "#d6d5da", focus: null },
     exact: { frameImage: "linear-gradient(96deg, oklab(0.918293 0.02586 -0.0400847 / 0.5) 39.84%, oklab(0.915892 0.0297772 0.0399772 / 0.5) 101.72%)",
              toolbar: "rgba(255, 255, 255, 0.4)", toolbar_field: "rgba(255, 255, 255, 0.4)", hover: "rgba(117, 102, 159, 0.25)" },
   },
   "neutral-dark": {
     label: "Beispiel: neutral dunkel", base: "dark",
     colors: { frame: "#1e1e1e", tab_background_text: "#d4d4d4", tab_selected: "#3c3c3c", tab_text: "#ffffff", tab_line: "#8a8a8a",
-              toolbar: "#2a2a2a", toolbar_text: "#e6e6e6", toolbar_field: "#1a1a1a", toolbar_field_text: "#e6e6e6", toolbar_field_border: "#7a7a7a" },
+              toolbar: "#2a2a2a", toolbar_text: "#e6e6e6", toolbar_field: "#1a1a1a", toolbar_field_text: "#e6e6e6", toolbar_field_border: "#7a7a7a", focus: null },
   },
   "neutral-light": {
     label: "Beispiel: neutral hell", base: "light",
     colors: { frame: "#e4e4e4", tab_background_text: "#2a2a2a", tab_selected: "#ffffff", tab_text: "#000000", tab_line: "#6e6e6e",
-              toolbar: "#f5f5f5", toolbar_text: "#1e1e1e", toolbar_field: "#ffffff", toolbar_field_text: "#1e1e1e", toolbar_field_border: "#808080" },
+              toolbar: "#f5f5f5", toolbar_text: "#1e1e1e", toolbar_field: "#ffffff", toolbar_field_text: "#1e1e1e", toolbar_field_border: "#808080", focus: null },
   },
 };
 
@@ -361,7 +363,10 @@ const COLOR_KEYS = [
   ["toolbar_field", "Adressfeld", "--toolbar-field-background-color"],
   ["toolbar_field_text", "Text im Adressfeld", "--toolbar-field-text-color"],
   ["toolbar_field_border", "Rahmen des Adressfelds", "--toolbar-field-border-color"],
+  ["focus", "Fokusring", "--focus-outline-color"],
 ];
+// Ohne Wert bleibt es bei Firefox' eigener Farbe
+const OPTIONAL = { tab_line: "nicht gesetzt: Firefox-Verlauf", focus: "nicht gesetzt: Firefox-Lila" };
 
 const TITLES = [
   ["Posteingang (3) – mailbox.org", "M", "#2c7a4b"], ["Arch Linux – News", "A", "#1793d1"],
@@ -440,7 +445,7 @@ const BUILTIN_VARIANTS = {
   // Entspricht userchrome/userChrome.css im Repo
   "Aktueller Stand": { radius: 8, marginBlock: 0, gap: 3, minWidth: 68, fontSize: 15, lineHeight: 1.3, iconEndMargin: 5,
     maskSize: 1.5, closeSize: 22, sepOn: true, sepHeight: 18, hoverBg: 20, chromeRadius: 8, previewGap: 3, preset: "neutral-dark",
-    colors: { tab_selected: "#472200", tab_line: "#e66100", toolbar: "#1e1e1e", toolbar_field: "#000000" } },
+    colors: { tab_selected: "#472200", tab_line: "#e66100", toolbar: "#1e1e1e", toolbar_field: "#000000", focus: "#e66100" } },
 };
 
 function load() {
@@ -493,7 +498,7 @@ function buildFx(el) {
     </div>
     <div class="nav-bar">
       ${tb("back")}${tb("fwd")}${tb("reload")}
-      <div class="urlbar">https://example.org/</div>
+      <div class="urlbar" tabindex="0" title="Anklicken zeigt den Fokusring">https://example.org/</div>
       ${tb("menu")}
     </div>
     <div class="page">Seiteninhalt</div>
@@ -590,6 +595,7 @@ function applyStyle(el, st) {
   set("--toolbar-field-background-color", exact.toolbar_field || c.toolbar_field);
   set("--toolbar-field-text-color", c.toolbar_field_text);
   set("--toolbar-field-border-color", c.toolbar_field_border);
+  set("--focus-outline-color", c.focus || (t.preset.base === "dark" ? "#b89cff" : "#764edd"));
 }
 
 // Was in Firefox JavaScript erledigt: Überlauf, Schließen-Knöpfe, Text-Überlauf
@@ -673,6 +679,7 @@ function readout() {
   if (val(S, "sepOn")) add("Trennlinie / Leiste", ratio(blend(text, frame, val(S, "sepStrength")), frame), 3);
   if (val(S, "inactiveBorder")) add("Rahmen inaktiv / Leiste", ratio(blend(text, frame, val(S, "inactiveBorder")), frame), 3);
   if (!t.builtin) add("Adressfeld-Rahmen / Leiste", ratio(hex(c.toolbar_field_border), hex(c.toolbar)), 3);
+  if (!t.builtin && c.focus) add("Fokusring / Leiste", ratio(hex(c.focus), hex(c.toolbar)), 3);
   $("#contrast").innerHTML = items.join("") + (t.builtin ? '<span class="badge">Verlauf der eingebauten Themes nicht eingerechnet</span>' : "");
 }
 
@@ -730,6 +737,7 @@ function exportCss(st = S) {
       `--toolbar-background-color: ${c.toolbar}`, `--toolbar-text-color: ${c.toolbar_text}`,
       `--toolbar-field-background-color: ${c.toolbar_field}`, `--toolbar-field-background-color-focus: ${c.toolbar_field}`,
       `--toolbar-field-text-color: ${c.toolbar_field_text}`, `--toolbar-field-border-color: ${c.toolbar_field_border}`,
+      ...(c.focus ? [`--focus-outline-color: ${c.focus}`] : []),
     ];
     const neutral = [
       `--toolbarbutton-icon-fill: currentColor`,
@@ -818,7 +826,7 @@ function syncPanel() {
     $("input[type=color]", row).value = v || t.colors.tab_background_text;
     const text = $("input[type=text]", row);
     if (document.activeElement !== text) text.value = v || "";
-    text.placeholder = k === "tab_line" ? "nicht gesetzt: Firefox-Verlauf" : "";
+    text.placeholder = OPTIONAL[k] || "";
   }
 }
 
