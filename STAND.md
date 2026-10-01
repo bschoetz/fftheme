@@ -1,7 +1,8 @@
 # Stand und nächste Schritte
 
-Stand: 01.10.2026. Es gibt eine erste `userChrome.css` zum Ausprobieren, aber noch kein Theme –
-sonst Doku, Ziele, Messungen und offene Fragen. Diese Datei ist der Einstiegspunkt, um weiterzumachen.
+Stand: 01.10.2026. Es gibt eine `userChrome.css` (Form) und ein erstes Theme (Farben), beide nach
+deinen Einstellungen im Simulator. Das Theme ist noch nicht signiert und hält deshalb nur bis zum
+nächsten Neustart (F6). Diese Datei ist der Einstiegspunkt, um weiterzumachen.
 
 ## Was wir wollen
 
@@ -48,6 +49,20 @@ Belegt durch Mozillas Doku und den Firefox-157-Quellcode, Details in `docs/firef
 
 ## Was es gibt
 
+`theme/manifest.json` – das Theme mit deinen Farben aus dem Simulator (01.10.2026): Leiste und
+Navigationsleiste `#1e1e1e`, aktiver Tab `#472200` mit Rand `#e66100`, Adressfeld `#000000`, Text
+`#d4d4d4` / `#e6e6e6` / `#ffffff`. Keine Bilder, also kein Verlauf. Nur eine dunkle Variante (F3).
+`web-ext lint` ohne Befund; alle Kontraste über den Mindestwerten. Headless mit der
+`userChrome.css` zusammen geladen: Farben greifen, der aktive Tab bekommt die Linie in `tab_line`.
+
+**Laden:** `about:debugging#/runtime/this-firefox` → „Temporäres Add-on laden…“ →
+`theme/manifest.json`. Das hält bis zum Neustart. Dauerhaft geht es in deinem Firefox nur signiert:
+Die Arch-Version verlangt die Signatur fest (`MOZ_REQUIRE_SIGNING`), `xpinstall.signatures.required
+= false` ändert daran nichts (getestet). → F6
+
+Nicht gesetzt und damit Firefox überlassen: Sidebar, Menüs/Panels, Icons, Neuer-Tab-Seite,
+Trennlinien der Toolbar.
+
 `userchrome/userChrome.css` – dein Zwischenstand vom 01.10.2026, im Simulator eingestellt:
 
 - Radius 8 px für Tabs, Adressfeld und Buttons (Firefox: 24 px).
@@ -59,7 +74,7 @@ Belegt durch Mozillas Doku und den Firefox-157-Quellcode, Details in `docs/firef
 - Zeilenhöhe 1,3. Du hattest 1 eingestellt; damit schneidet Firefox Unterlängen ab (g, p, y). 1,3
   ändert sonst nichts, weil die Tab-Höhe von `--tab-min-height` kommt.
 
-Im Simulator ist das die Variante „Aktuelle userChrome.css“.
+Im Simulator ist das zusammen mit den Theme-Farben die Variante „Aktueller Stand“.
 
 Die Datei ist per Symlink in dein Profil eingehängt (`<Profil>/chrome/userChrome.css`). Sie wirkt
 erst, wenn `toolkit.legacyUserProfileCustomizations.stylesheets` in `about:config` auf `true` steht
@@ -109,6 +124,7 @@ Vollständig in `OFFENE_FRAGEN.md`. Für den Start nötig:
 
 | Frage | Blockiert |
 | --- | --- |
+| **F6** – Theme signieren (AMO-Konto nötig)? | dauerhafte Nutzung des Themes |
 | **F2** – Theme allein oder plus `userChrome.css`? | Schritt 3 |
 | **F12** – Was heißt „horizontale Breite“ genau, was darf bei schmalen Tabs wegfallen? | Schritt 3 |
 | **F3** – hell, dunkel oder beides? | Schritt 2 |
@@ -143,7 +159,8 @@ Später: F5 (Nutzung), F6 (Signierung), F7 (Name, ID, Lizenz), F8 (Mindestversio
 | `README.md` | Projektziel (englisch) |
 | `CLAUDE.md` | Arbeitsregeln: Commit + Push auf `main` nach jeder bedeutsamen Änderung |
 | `OFFENE_FRAGEN.md` | Offene und entschiedene Fragen |
-| `userchrome/userChrome.css` | Tab-Radius und Trennlinien, zum Ausprobieren |
+| `theme/manifest.json` | Das Theme: Farben |
+| `userchrome/userChrome.css` | Form der Tabs, Trennlinien, Radius von Adressfeld und Buttons |
 | `userchrome/simulator.html` | Tab-Simulator: Varianten durchspielen, CSS und Theme-Farben erzeugen |
 | `docs/firefox-theming/README.md` | Index der Doku, Quellen, Lizenzen |
 | `docs/firefox-theming/theme-keys.md` | Alle Theme-Keys mit Nova-Status |

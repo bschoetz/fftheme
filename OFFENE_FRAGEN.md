@@ -93,6 +93,13 @@ nach dem Neustart weg. Für den Alltag brauchen wir also eine Signatur von addon
 
 Empfehlung: zunächst unlisted signieren, Veröffentlichung später entscheiden.
 
+Nachtrag 01.10.2026 – jetzt dringend: `theme/manifest.json` existiert, hält in deinem Firefox aber
+nur bis zum Neustart. Getestet: Die Arch-Version lehnt ein unsigniertes Theme auch mit
+`xpinstall.signatures.required = false` ab. Für „unlisted“ brauchst du ein Konto auf
+addons.mozilla.org und dort einen API-Schlüssel (JWT issuer + secret); dann signiert
+`npx web-ext sign --channel unlisted --api-key … --api-secret …` im Ordner `theme/` und liefert eine
+`.xpi` zum Installieren. Vorher F7 klären, weil die ID danach feststeht.
+
 Antwort:
 
 ### F7 – Name, ID, Lizenz
@@ -101,6 +108,9 @@ Antwort:
 - Add-on-ID, z. B. `fftheme@bschoetz` – einmal vergeben, später nicht mehr änderbar, ohne dass es
   als neues Add-on gilt.
 - Lizenz für das Repo? Empfehlung: MPL 2.0 (wie Firefox) oder MIT.
+
+Vorläufig steht im Manifest Name `fftheme`, ID `fftheme@bschoetz`, Version `0.1`. Solange nichts
+signiert ist, lässt sich das frei ändern.
 
 Antwort:
 
@@ -164,3 +174,10 @@ zwischen inaktiven Tabs. Erste Fassung von Claude: Radius 4 px, Trennlinie in 50
 Zwischenstand von dir, im Simulator eingestellt (01.10.2026): Radius 8 px auch für Adressfeld und
 Buttons, kein Abstand über und unter den Tabs, Lücke 2 px, Mindestbreite 68 px, Schrift 15 px,
 Trennlinie 18 px hoch. → `userchrome/userChrome.css`, Einzelheiten in `STAND.md`.
+
+### E4 – Farben, erster Stand (01.10.2026)
+
+Im Simulator eingestellt, ausgehend vom Beispiel „neutral dunkel“: Leiste und Navigationsleiste
+`#1e1e1e`, aktiver Tab `#472200` mit Rand `#e66100`, Adressfeld `#000000`. → `theme/manifest.json`.
+Berührt F3 (bisher nur dunkel) und F4 (Grau mit Orange als Akzent); beide bleiben offen, bis du den
+Stand im echten Browser gesehen hast.

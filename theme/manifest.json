@@ -1,0 +1,29 @@
+{
+  "manifest_version": 3,
+  "name": "fftheme",
+  "version": "0.1",
+  "description": "Neutral dark theme for Firefox 157+ (Nova), made for compact mode and many tabs.",
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "fftheme@bschoetz",
+      "strict_min_version": "157.0"
+    }
+  },
+  "theme": {
+    "colors": {
+      "frame": "#1e1e1e",
+      "tab_background_text": "#d4d4d4",
+      "tab_selected": "#472200",
+      "tab_text": "#ffffff",
+      "tab_line": "#e66100",
+      "toolbar": "#1e1e1e",
+      "toolbar_text": "#e6e6e6",
+      "toolbar_field": "#000000",
+      "toolbar_field_text": "#e6e6e6",
+      "toolbar_field_border": "#7a7a7a"
+    },
+    "properties": {
+      "color_scheme": "dark"
+    }
+  }
+}
