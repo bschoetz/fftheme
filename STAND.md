@@ -72,7 +72,7 @@ Trennlinien der Toolbar.
 
 - Radius 8 px für Tabs, Adressfeld und Buttons (Firefox: 24 px).
 - Tableiste 28 px hoch statt 36 px: kein Abstand über und unter den Tabs.
-- Lücke zwischen Tabs 2 px statt 4 px, Mindestbreite 68 px statt 76 px.
+- Lücke zwischen Tabs 3 px statt 4 px, Mindestbreite 68 px statt 76 px.
 - Schrift der Tab-Titel 15 px, Schließen-Knopf 22 px, Text blendet über 1,5 em aus.
 - 1 px breite, 18 px hohe Trennlinie zwischen inaktiven Tabs in 50 % der Textfarbe; keine Linie am
   aktiven und am überfahrenen Tab.
