@@ -26,7 +26,7 @@
 }
 
 #tab-preview-panel {
-  margin-top: calc(1px - var(--panel-box-shadow-margin)) !important;
+  margin-top: calc(2px - var(--panel-box-shadow-margin)) !important;
 }
 
 .tabbrowser-tab {
