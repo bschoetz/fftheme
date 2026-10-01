@@ -82,3 +82,9 @@
   --urlbar-box-background-color-hover: color-mix(in srgb, currentColor 22%, transparent) !important;
   --urlbar-box-background-color-active: color-mix(in srgb, currentColor 30%, transparent) !important;
 }
+
+/* Aktiver Tab beim Überfahren: Füllung und Rand etwas heller */
+:root[theme-effective-id="firefox-compact-dark@mozilla.org"] .tabbrowser-tab[selected]:hover {
+  --tab-background-color-selected: #582900 !important;
+  --tab-border-color-accent: linear-gradient(96deg, #582900 20.68%, #582900 79.34%) !important;
+}
