@@ -164,9 +164,6 @@ normalen Rahmens). Aus dem zweiten Wert leitet Firefox auch den Innenabstand des
 (`--urlbar-input-container-padding`); wer ihn ändert, muss den Innenabstand festhalten, sonst
 verschiebt sich der Inhalt des Felds um 1px (gemessen).
 
-| | |
-| --- | --- |
-
 Gemessen in 157.0: Mit diesen Variablen stimmen die berechneten Farben von Leiste, Tabs,
 Navigationsleiste, Adressfeld, Icons und Hover mit denen eines eigenen Themes gleicher Farben
 überein; „Firefox Hell“ bleibt vom dunklen Block unberührt, und ein entsprechender Block über
