@@ -81,15 +81,16 @@ Form:
 Farben (eigener Block am Ende der Datei, gilt nur mit „Firefox Dunkel“):
 
 - Leiste und Navigationsleiste `#1e1e1e`, kein Verlauf.
-- Aktiver Tab grau `#555555`, Text `#ffffff`, ohne sichtbaren Rand (Randfarbe gleich Füllung). Beim
-  Überfahren heller: `#646464`. Das Grau ist Claudes Wahl: heller als ein überfahrener inaktiver Tab
-  (`#424242`), damit der aktive immer der hellste bleibt. Vorher Orangebraun `#391b00` / `#582900`.
+- Aktiver Tab grau `#3c3c3c`, Text `#ffffff`, ohne sichtbaren Rand (Randfarbe gleich Füllung). Beim
+  Überfahren heller: `#4b4b4b`. Inaktive Tabs werden beim Überfahren `#343434` (12 % der Textfarbe;
+  du hattest 20 % eingestellt, Claude hat es gesenkt, damit der aktive Tab der hellste bleibt). Die
+  Grautöne sind Claudes Wahl nach „dunkler, nicht so grell“; davor `#555555`, davor Orangebraun.
 - Inaktive Tabs Text `#d4d4d4`.
 - Adressfeld `#000000`, Rahmen `#5a5a5a`, Text `#e6e6e6`.
 - Fokusring neutral `#d4d4d4`, Kontrast 11,2 – nur noch für den Tastaturfokus an Buttons.
 - Icons, Schließen-Kreuz, Hover und Plaketten im Adressfeld neutral statt lila getönt.
-- Kontraste: Text 11,2 (inaktiv) und 7,5 (aktiv, 5,9 beim Überfahren); Trennlinie 3,8. Die Fläche des
-  aktiven Tabs hebt sich mit 2,2 von der Leiste ab. Der Rahmen des
+- Kontraste: Text 11,2 (inaktiv) und 11,0 (aktiv, 8,7 beim Überfahren); Trennlinie 3,8. Die Fläche des
+  aktiven Tabs hebt sich mit 1,5 von der Leiste ab. Der Rahmen des
   Adressfelds liegt mit 2,4 unter dem Mindestwert von 3 – von dir so gewählt (01.10.2026).
 
 Nicht überschrieben und damit weiter „Firefox Dunkel“: Menüs und Panels, Sidebar, Neuer-Tab-Seite
