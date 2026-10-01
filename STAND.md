@@ -37,7 +37,9 @@ Belegt durch Mozillas Doku und den Firefox-157-Quellcode, Details in `docs/firef
    Innenabstand (6 px im Kompaktmodus), Maximalbreite (225 px) und Eckenradius gehen nur per
    `userChrome.css`.
 7. **`theme_experiment`** (Theme mit eigenem Stylesheet) läuft nur in Nightly und Developer
-   Edition – für uns keine Option.
+   Edition – für uns keine Option. In Firefox 157.0 Release getestet: Das Stylesheet wird nicht
+   angewendet, auch nicht mit `extensions.experiments.enabled = true`. Es gibt damit keinen Weg, die
+   `userChrome.css` als Add-on zu verteilen.
 8. **Signatur:** Release-Firefox installiert dauerhaft nur von AMO signierte Themes. Zum Entwickeln
    reicht temporäres Laden über `about:debugging`.
 9. **`userChrome.css` funktioniert in 157 und braucht nur Variablen.** Gemessen in Firefox 157.0
@@ -46,6 +48,9 @@ Belegt durch Mozillas Doku und den Firefox-157-Quellcode, Details in `docs/firef
    sichtbaren Tabs (16 → 32 bei 1400 px Fensterbreite). Sechs Radius-Tokens machen auch Adressleiste
    und Buttons eckig. Jede Deklaration braucht `!important`. Details und Mechanik:
    `docs/firefox-theming/userchrome.md`.
+10. **Ein Theme schaltet Nova nicht ab.** Mit unserem Theme bleiben `browser.nova.enabled = true`,
+    Tab-Radius 24 px und Leistenhöhe 36 px (gemessen). Es verschwinden nur Novas Farbmerkmale:
+    Verlauf im Hintergrund, Verlaufsrahmen am aktiven Tab, lila Akzentfarbe.
 
 ## Was es gibt
 
@@ -76,9 +81,9 @@ Trennlinien der Toolbar.
 
 Im Simulator ist das zusammen mit den Theme-Farben die Variante „Aktueller Stand“.
 
-Die Datei ist per Symlink in dein Profil eingehängt (`<Profil>/chrome/userChrome.css`). Sie wirkt
-erst, wenn `toolkit.legacyUserProfileCustomizations.stylesheets` in `about:config` auf `true` steht
-und Firefox neu gestartet wurde. Abschalten: Pref zurück auf `false` und neu starten.
+Die Datei ist per Symlink in dein Profil eingehängt (`<Profil>/chrome/userChrome.css`), die Pref
+`toolkit.legacyUserProfileCustomizations.stylesheets` steht auf `true`; laut dir greift die Form im
+echten Fenster. Änderungen wirken nach einem Neustart. Abschalten: Pref auf `false` und neu starten.
 
 `userchrome/simulator.html` – Tab-Simulator zum Durchspielen von Varianten. Eine einzelne
 HTML-Datei, die du im Browser öffnest: links eine nachgebaute Tableiste, rechts Regler für alles,
@@ -95,10 +100,10 @@ vertikale Tabs (die Regeln greifen dort absichtlich nicht).
 
 ## Was wir noch nicht wissen
 
-- **Niemand hat es bisher angesehen.** Die Theme-Angaben stammen aus Doku und Quellcode. Die
-  `userChrome.css`-Werte sind gemessen (berechnete Styles und Layout), aber nicht als Bild geprüft:
-  Ob schmale, eckige Tabs lesbar bleiben und der aktive Tab erkennbar ist, zeigt nur der echte
-  Browser.
+- **Wie das Theme in deinem echten Fenster aussieht.** Geprüft ist es nur headless. Die Form
+  (`userChrome.css`) hast du gesehen, die Farben noch nicht.
+- Wie Theme und CSS unter Windows und macOS aussehen (Fensterknöpfe in der Tableiste, andere
+  Systemschrift) – nicht getestet.
 - Wie sich die Variablen auf Menüs, Panels, Sidebar und vertikale Tabs auswirken – nicht gemessen.
 - Wie Firefox unter Sway die System-Akzentfarbe bestimmt und ob sie zu einem neutralen Theme passt.
 - Ob die Angabe „✓ unverändert“ in `theme-keys.md` für jeden Key stimmt – sie beruht auf Mozillas
@@ -115,43 +120,41 @@ vertikale Tabs (die Regeln greifen dort absichtlich nicht).
 | Eckige Tabs ohne Lücken | – | – | nur hier |
 | Eckige Adressleiste und Buttons | – | – | nur hier |
 
-Empfehlung: **Theme plus `userChrome.css`** (Variante C in F2). Das Theme bleibt allein nutzbar und
-update-fest; das CSS ist ein kleiner Zusatz, der nach Firefox-Updates geprüft werden muss.
+Wir arbeiten mit Theme plus `userChrome.css` (Variante C in F2; von dir benutzt, aber noch nicht
+ausdrücklich entschieden).
 
 ## Offene Entscheidungen
 
-Vollständig in `OFFENE_FRAGEN.md`. Für den Start nötig:
+Vollständig in `OFFENE_FRAGEN.md`.
 
 | Frage | Blockiert |
 | --- | --- |
+| **F7** – Name, ID, Lizenz | Signatur, Weitergabe |
 | **F6** – Theme signieren (AMO-Konto nötig)? | dauerhafte Nutzung des Themes |
-| **F2** – Theme allein oder plus `userChrome.css`? | Schritt 3 |
 | **F13** – Wie geben wir Theme und CSS weiter? | Installationsskript, Releases |
-| **F12** – Was heißt „horizontale Breite“ genau, was darf bei schmalen Tabs wegfallen? | Schritt 3 |
-| **F3** – hell, dunkel oder beides? | Schritt 2 |
-| **F4** – Farbrichtung: reines Grau, warm, kühl; mit oder ohne Akzent? | Schritt 2 |
+| **F3** – hell, dunkel oder beides? | Weitergabe (bisher nur dunkel) |
+| **F2** – Theme plus `userChrome.css` bestätigen | nichts, nur festhalten |
 
-Später: F5 (Nutzung), F6 (Signierung), F7 (Name, ID, Lizenz), F8 (Mindestversion), F9–F11
-(Organisatorisches).
+Später: F4 (Farbrichtung, vorläufig E4), F5 (Nutzung), F12 (was bei schmalen Tabs wegfallen darf),
+F8–F11.
 
-## Vorschlag für die nächsten Schritte
+## Nächste Schritte
 
-1. **Sofort, ohne Risiko – selbst ausprobieren:** in `about:config` `browser.uidensity` auf `1` und
-   `browser.tabs.tabMinWidth` auf `50` setzen. Zeigt in zwei Minuten, wie weit die eingebauten
-   Mittel tragen und was danach noch stört. Rückgängig per Rechtsklick → Zurücksetzen.
-2. **Theme-Grundgerüst** (`theme/manifest.json`): neutrale Graupalette, hell und dunkel, keine
-   Bilder, deckende Flächen, klar abgesetzter aktiver Tab. Kontraste nachrechnen, temporär laden,
-   mit der Checkliste aus `nova-aenderungen.md` durchgehen. Braucht F3 und F4 – notfalls beginne
-   ich mit reinem Grau in beiden Varianten als Diskussionsgrundlage.
-3. **`userChrome.css` weiterführen** (`userchrome/userChrome.css`, erste Fassung liegt vor): nach
-   deinem Eindruck Radius und Trennlinie justieren, dann Lücken zwischen Tabs entfernen,
-   Innenabstand und Mindestbreite senken – nach `userchrome.md` allein über Variablen.
-   Werte nach dem Schreiben mit `userchrome-test/variablen.py` nachmessen. Voraussetzung: `toolkit.legacyUserProfileCustomizations.stylesheets = true` und ein
-   `chrome/`-Ordner im Profil. Braucht F2 und F12.
-4. **Gemeinsam iterieren:** Du schaust es dir im Alltag mit vielen Tabs an, wir justieren Farben,
-   Breiten und Lesbarkeit.
-5. **Abschluss des ersten Themes:** Name, ID und Lizenz festlegen (F7), unlisted bei AMO signieren
-   (F6), Installationsanleitung für Theme, Prefs und CSS ins README.
+1. **Du: Theme ansehen.** `about:debugging#/runtime/this-firefox` → „Temporäres Add-on laden…“ →
+   `theme/manifest.json`. Im Alltag mit vielen Tabs ansehen, auch Menüs, Sidebar, angeheftete Tabs.
+   Was stört, im Simulator ändern oder mir sagen.
+2. **Du: F7 und F6 entscheiden.** Name, ID und Lizenz festlegen, AMO-Konto mit API-Schlüssel
+   anlegen. Danach signiere ich das Theme „unlisted“; erst dann bleibt es nach einem Neustart.
+3. **Claude, ohne weitere Entscheidung möglich: Theme vervollständigen.** Vorschlag für die Bereiche,
+   die bisher Firefox überlassen sind (Sidebar, Menüs/Panels, Icons, Hover der Buttons,
+   Neuer-Tab-Seite, Trennlinien), abgeleitet aus deinen zehn Farben; Kontraste rechnen, headless
+   laden, Checkliste aus `nova-aenderungen.md`. Außerdem prüfen, dass das Theme ohne CSS ordentlich
+   aussieht.
+4. **Helle Variante** (F3), sobald die dunkle steht – nötig für die Weitergabe.
+5. **Weitergabe vorbereiten** (F13): CSS nach `chrome/fftheme/fftheme.css` mit `@import`-Zeile
+   umbauen, Installationsskript für Linux, Optionen über Prefs, Anleitung ins README. Danach
+   PowerShell-Skript für Windows und die Messskripte in GitHub Actions.
+6. **Erstes Release:** signierte `.xpi`, CSS-Paket und Skripte auf GitHub.
 
 ## Wo was steht
 
