@@ -115,14 +115,16 @@ und merkt sich benannte Varianten. Tab-Maße und Farben stimmen mit Firefox 157.
 (`userchrome-test/simulator.py`: 0 Abweichungen, Standard und ein Stil mit allen Reglern und Farben
 verändert, je 6, 12 und 40 Tabs). Nicht gegen Firefox geprüft: Hover, Dichte „normal“.
 
-Die Form hast du im echten Fenster gesehen. Die Farben per CSS sind nur headless geprüft
-(Screenshots mit „Firefox Dunkel“, 12 Tabs). Nicht geprüft: inaktives Fenster, privates Fenster,
+Form und Farben hast du im echten Fenster gesehen, zuletzt den randlosen aktiven Tab. Die letzten
+drei Änderungen sind bisher nur headless geprüft: grauer aktiver Tab, Aufhellen beim Überfahren,
+rotes Schließen-Kreuz. Nicht geprüft: inaktives Fenster, privates Fenster,
 angeheftete Tabs, Tab-Gruppen, Tabs beim Ziehen, vertikale Tabs (die Tab-Regeln greifen dort
 absichtlich nicht).
 
 ## Was wir noch nicht wissen
 
-- **Wie die Farben in deinem echten Fenster aussehen.** Geprüft sind sie nur headless.
+- **Ob die Graustufen im echten Fenster gut unterscheidbar sind.** Leiste `#1e1e1e`, überfahrener
+  inaktiver Tab `#343434`, aktiver Tab `#3c3c3c`, überfahren `#4b4b4b` liegen eng beieinander.
 - Wie das CSS unter Windows und macOS aussieht (Fensterknöpfe in der Tableiste, andere
   Systemschrift) – nicht getestet.
 - Wie sich die Variablen auf Menüs, Panels, Sidebar und vertikale Tabs auswirken – nicht gemessen.
@@ -138,7 +140,7 @@ Vollständig in `OFFENE_FRAGEN.md`.
 | --- | --- |
 | **F7** – Name und Lizenz | Weitergabe |
 | **F3** – auch eine helle Variante (Block über „Firefox Hell“)? | Weitergabe an Leute mit hellem Firefox |
-| Akzentfarbe (Checkboxen, Schalter): Nova-Lila lassen oder auf dein Orange setzen? | nichts, Optik |
+| Akzentfarbe (Checkboxen, Schalter, Ladeanzeige): Nova-Lila lassen oder neutral setzen? | nichts, Optik |
 
 Später: F4 (Farbrichtung, vorläufig E4), F5 (Nutzung), F12 (was bei schmalen Tabs wegfallen darf),
 F8–F11.

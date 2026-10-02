@@ -158,6 +158,20 @@ Dunkel“ und binden den Block an dessen Kennung, damit er mit keinem anderen Th
 | Plaketten im Adressfeld | `--urlbar-box-background-color` (auch `-hover`, `-active`) |
 | Fokusring (Rahmen des fokussierten Adressfelds, Tastaturfokus) | `--focus-outline-color` |
 
+Weitere Farbvariablen, die wir benutzen:
+
+| Zweck | Variable | Hinweis |
+| --- | --- | --- |
+| Hintergrund des Schließen-Kreuzes beim Überfahren / gedrückt | `--tab-close-button-background-color-hover`, `-active` | auf `:root`; unabhängig vom Theme |
+| Rahmen des fokussierten Adressfelds | `--toolbar-field-border-color-focus` | ab Werk `var(--focus-outline-color)`; auf `var(--toolbar-field-border-color)` gesetzt bleibt der Rahmen beim Fokus gleich |
+| Aktiver Tab beim Überfahren | `--tab-background-color-selected`, `--tab-border-color-accent` auf `.tabbrowser-tab[selected]:hover` | siehe unten |
+
+Der Rand des aktiven Tabs ist bei Firefox' eigenen Themes ein Verlauf, `--tab-border-color-accent`,
+zusammengesetzt aus `--tab-border-color-selected-leading` und `-trailing`. Firefox setzt den Verlauf
+auf `:root` zusammen. Die beiden Einzelfarben wirken deshalb nur, wenn man sie auf `:root`
+überschreibt; für einen Zustand eines einzelnen Tabs (Hover) muss man den fertigen Verlauf
+`--tab-border-color-accent` am Tab-Element setzen. Gemessen mit echtem Mauszeiger.
+
 Die Stärke des Fokusrings steuern `--focus-outline-width` (Tastaturfokus, ab Werk 2px) und
 `--urlbar-input-container-border-width-open` (fokussiertes Adressfeld, ab Werk das Doppelte des
 normalen Rahmens). Aus dem zweiten Wert leitet Firefox auch den Innenabstand des Adressfelds ab
